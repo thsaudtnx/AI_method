@@ -5,16 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="a964f096-4b37-45d2-a1c8-e4fdf6a9601e" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/uiDesigner.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/AntColonyOptimization/AntColonyOptimization.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/GeneticAlgorithm/GeneticAlgorithm.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/SimulatedAnnealing/SimulatedAnnealing.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/BPP.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/BPP/BPP.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/BPPDatasetParser.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/BPP/BPPDatasetParser.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/BPPInstance.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/BPP/BPPInstance.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Decreasing.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/BestFitDecreasing/BestFitDecreasing.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Greedy.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/GeneticAlgorithm/GeneticAlgorithm.java" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -44,7 +35,8 @@
   "keyToString": {
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true"
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "git-widget-placeholder": "main"
   }
 }]]></component>
   <component name="RecentsManager">
@@ -53,7 +45,7 @@
       <recent name="C:\Users\messi\Desktop\Nottingham University\Year 2\sem2\AIM\CW\BinPacking\src" />
     </key>
   </component>
-  <component name="RunManager" selected="Application.BestFitDecreasing">
+  <component name="RunManager">
     <configuration name="BPPDatasetParser" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="BPP.BPPDatasetParser" />
       <module name="BinPacking" />
@@ -109,5 +101,10 @@
       <updated>1709879988864</updated>
     </task>
     <servers />
+  </component>
+  <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/BinPackingProblem$GeneticAlgoSimulator.ic" NAME="GeneticAlgoSimulator Coverage Results" MODIFIED="1710952484698" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false">
+      <FILTER>GeneticAlgorithm.*</FILTER>
+    </SUITE>
   </component>
 </project>

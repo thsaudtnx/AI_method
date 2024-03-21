@@ -1,3 +1,5 @@
+package BPP;
+
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -5,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BPPDatasetParser {
-    private static final String FILENAME = "src/BPP.txt";
+    private static final String FILENAME = "src/BPP/BPP.txt";
 
     public List<BPPInstance> parseBPPInstances() {
         List<BPPInstance> instances = new ArrayList<>();

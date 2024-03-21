@@ -5,9 +5,16 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="a964f096-4b37-45d2-a1c8-e4fdf6a9601e" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/Decreasing.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Greedy.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/uiDesigner.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/AntColonyOptimization/AntColonyOptimization.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/GeneticAlgorithm/GeneticAlgorithm.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/SimulatedAnnealing/SimulatedAnnealing.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/BPP.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/BPP/BPP.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/BPPDatasetParser.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/BPP/BPPDatasetParser.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/BPPInstance.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/BPP/BPPInstance.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Decreasing.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/BestFitDecreasing/BestFitDecreasing.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Greedy.java" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -33,20 +40,29 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\messi\Desktop\Nottingham University\Year 2\sem2\AIM\CW\BinPacking\src\BPP" />
       <recent name="C:\Users\messi\Desktop\Nottingham University\Year 2\sem2\AIM\CW\BinPacking\src" />
     </key>
   </component>
-  <component name="RunManager" selected="Application.Decreasing">
+  <component name="RunManager" selected="Application.BestFitDecreasing">
     <configuration name="BPPDatasetParser" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="BPPDatasetParser" />
+      <option name="MAIN_CLASS_NAME" value="BPP.BPPDatasetParser" />
+      <module name="BinPacking" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="BestFitDecreasing" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="BestFitDecreasing.BestFitDecreasing" />
       <module name="BinPacking" />
       <method v="2">
         <option name="Make" enabled="true" />
@@ -54,13 +70,6 @@
     </configuration>
     <configuration name="BruteForce" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="BruteForce" />
-      <module name="BinPacking" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="Decreasing" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="Decreasing" />
       <module name="BinPacking" />
       <method v="2">
         <option name="Make" enabled="true" />
@@ -82,10 +91,10 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Application.Decreasing" />
+        <item itemvalue="Application.BestFitDecreasing" />
+        <item itemvalue="Application.BPPDatasetParser" />
         <item itemvalue="Application.Greedy" />
         <item itemvalue="Application.Main" />
-        <item itemvalue="Application.BPPDatasetParser" />
         <item itemvalue="Application.BruteForce" />
       </list>
     </recent_temporary>

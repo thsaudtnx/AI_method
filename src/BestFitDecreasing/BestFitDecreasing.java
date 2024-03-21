@@ -1,7 +1,13 @@
+package BestFitDecreasing;
+
+import BPP.BPPDatasetParser;
+import BPP.BPPInstance;
+
+import java.util.Collections;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Greedy {
+public class BestFitDecreasing {
 
     public static void main(String[] args) {
         BPPDatasetParser parser = new BPPDatasetParser();
@@ -15,17 +21,17 @@ public class Greedy {
                 List<Integer> itemCounts = instance.getItemCounts();
                 int binCapacity = instance.getBinCapacity();
 
-                // First Fit
-                List<Integer> binsFirstFit = firstFit(itemWeights, itemCounts, binCapacity);
-                System.out.println("First Fit bins: " + binsFirstFit.size());
+                // Apply Decreasing Algorithm (Sort itemWeights in decreasing order)
+                List<Integer> decreasingItemWeights = new ArrayList<>(itemWeights);
+                Collections.sort(decreasingItemWeights, Collections.reverseOrder());
 
-                // Best Fit
-                List<Integer> binsBestFit = bestFit(itemWeights, itemCounts, binCapacity);
-                System.out.println("Best Fit bins: " + binsBestFit.size());
+                // Decreasing First Fit
+                List<Integer> binsDecreasingFirstFit = firstFit(decreasingItemWeights, itemCounts, binCapacity);
+                System.out.println("Decreasing First Fit bins: " + binsDecreasingFirstFit.size());
 
-                // Next Fit
-                List<Integer> binsNextFit = nextFit(itemWeights, itemCounts, binCapacity);
-                System.out.println("Next Fit bins: " + binsNextFit.size());
+                // Decreasing Best Fit
+                List<Integer> binsDecreasingBestFit = bestFit(decreasingItemWeights, itemCounts, binCapacity);
+                System.out.println("Decreasing Best Fit bins: " + binsDecreasingBestFit.size());
 
                 System.out.println();
             }
@@ -74,23 +80,6 @@ public class Greedy {
                 bins.add(weight);
             }
         }
-        return bins;
-    }
-
-    public static List<Integer> nextFit(List<Integer> itemWeights, List<Integer> itemCounts, int binCapacity) {
-        List<Integer> bins = new ArrayList<>();
-        int currentBinCapacity = 0;
-        for (int i = 0; i < itemWeights.size(); i++) {
-            int weight = itemWeights.get(i);
-            int count = itemCounts.get(i);
-            if (currentBinCapacity + weight <= binCapacity) {
-                currentBinCapacity += weight;
-            } else {
-                bins.add(currentBinCapacity);
-                currentBinCapacity = weight;
-            }
-        }
-        bins.add(currentBinCapacity);
         return bins;
     }
 }

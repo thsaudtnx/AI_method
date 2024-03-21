@@ -4,8 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a964f096-4b37-45d2-a1c8-e4fdf6a9601e" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/src/GeneticAlgorithm/GeneticAlgorithm.java" beforeDir="false" />
+    <list default="true" id="a964f096-4b37-45d2-a1c8-e4fdf6a9601e" name="Changes" comment="Genetic Algorithm 1 (not fully functional)">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/GeneticAlgorithm/BestFitSimulator.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/GeneticAlgorithm/Chromosome.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/GeneticAlgorithm/Chromosome.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/GeneticAlgorithm/Fitness.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/GeneticAlgorithm/Generation.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/GeneticAlgorithm/GeneticAlgoSimulator.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/GeneticAlgorithm/GeneticAlgoSimulator.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -25,22 +29,26 @@
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
   </component>
+  <component name="ProjectColorInfo"><![CDATA[{
+  "associatedIndex": 8
+}]]></component>
   <component name="ProjectId" id="2dOXEJwgfJGtMIJ8TtutPWTM6h5" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "git-widget-placeholder": "main"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\enxua\Downloads\BinPackingProblem\src\GeneticAlgorithm" />
       <recent name="C:\Users\messi\Desktop\Nottingham University\Year 2\sem2\AIM\CW\BinPacking\src\BPP" />
       <recent name="C:\Users\messi\Desktop\Nottingham University\Year 2\sem2\AIM\CW\BinPacking\src" />
     </key>
@@ -100,7 +108,20 @@
       <option name="presentableId" value="Default" />
       <updated>1709879988864</updated>
     </task>
+    <task id="LOCAL-00001" summary="Genetic Algorithm 1 (not fully functional)">
+      <option name="closed" value="true" />
+      <created>1710993763119</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1710993763119</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Genetic Algorithm 1 (not fully functional)" />
+    <option name="LAST_COMMIT_MESSAGE" value="Genetic Algorithm 1 (not fully functional)" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/BinPackingProblem$GeneticAlgoSimulator.ic" NAME="GeneticAlgoSimulator Coverage Results" MODIFIED="1710952484698" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false">

@@ -37,7 +37,7 @@ public class BPPDatasetParser {
         if (instances != null) {
             for (BPPInstance instance : instances) {
                 System.out.println("Problem Name: " + instance.getProblemName());
-                System.out.println("Number of Item Weights: " + instance.getNumItemWeights());
+                System.out.println("Number of Items : " + instance.getNumItemWeights());
                 System.out.println("Bin Capacity: " + instance.getBinCapacity());
                 System.out.println("Item Weights and Counts:");
                 for (int i = 0; i < instance.getNumItemWeights(); i++) {

@@ -7,8 +7,11 @@
     <list default="true" id="a964f096-4b37-45d2-a1c8-e4fdf6a9601e" name="Changes" comment="Genetic Algorithm (not fully funcitonal)">
       <change afterPath="$PROJECT_DIR$/src/TabuSearch/TabuSearch.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+<<<<<<< HEAD
       <change beforePath="$PROJECT_DIR$/src/AntColonyOptimization/AntColonyOptimization.java" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/BestFitDecreasing/BestFitDecreasing.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/BestFitDecreasing/BestFitDecreasing.java" afterDir="false" />
+=======
+>>>>>>> e84ca6fd9a6f981d1ab6842c7f68896c7d25ec75
       <change beforePath="$PROJECT_DIR$/src/GeneticAlgorithm/GeneticAlgoSimulator.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/GeneticAlgorithm/GeneticAlgoSimulator.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -38,6 +41,7 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
+<<<<<<< HEAD
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
     "RunOnceActivity.OpenProjectViewOnStart": "true",
@@ -45,6 +49,15 @@
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "git-widget-placeholder": "main",
     "last_opened_file_path": "C:/Users/messi/Desktop/Nottingham University/Year 2/sem2/AIM/CW/BinPackingProblem"
+=======
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/enxua/Downloads/BinPackingProblem&quot;
+>>>>>>> e84ca6fd9a6f981d1ab6842c7f68896c7d25ec75
   }
 }]]></component>
   <component name="RecentsManager">
@@ -57,7 +70,7 @@
       <recent name="C:\Users\messi\Desktop\Nottingham University\Year 2\sem2\AIM\CW\BinPacking\src" />
     </key>
   </component>
-  <component name="RunManager" selected="Application.BPPDatasetParser">
+  <component name="RunManager">
     <configuration name="BPPDatasetParser" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="BPP.BPPDatasetParser" />
       <module name="BinPacking" />
@@ -95,8 +108,8 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Application.BPPDatasetParser" />
         <item itemvalue="Application.BestFitDecreasing" />
+        <item itemvalue="Application.BPPDatasetParser" />
         <item itemvalue="Application.Greedy" />
         <item itemvalue="Application.Main" />
         <item itemvalue="Application.BruteForce" />
@@ -128,7 +141,15 @@
       <option name="project" value="LOCAL" />
       <updated>1710996571831</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="Genetic Algorithm (not fully funcitonal)">
+      <option name="closed" value="true" />
+      <created>1711003360145</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1711003360145</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">

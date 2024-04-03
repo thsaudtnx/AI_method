@@ -2,20 +2,13 @@ package GeneticAlgorithm;
 
 import BPP.BPPDatasetParser;
 import BPP.BPPInstance;
-import java.util.HashMap;
+
 import java.util.List;
-import java.util.Random;
-import java.util.Scanner;
+
+import static GeneticAlgorithm.GeneticAlgorithm.geneticAlgorithm;
+
 
 public class GeneticAlgoSimulator {
-
-    private static int capacity;
-    private static int no_items;
-    private static int items[];
-    private static int population_size;
-    private static int generation;
-    private static int global_minimum_bins;
-
     public static void main(String[] args) {
         BPPDatasetParser parser = new BPPDatasetParser();
         List<BPPInstance> instances = parser.parseBPPInstances();
@@ -28,9 +21,12 @@ public class GeneticAlgoSimulator {
                 List<Integer> itemCounts = instance.getItemCounts();
                 int binCapacity = instance.getBinCapacity();
 
+<<<<<<< HEAD
                 //run my genetic algorithm here
                 //geneticAlgorithm(itemWeights, itemCounts, binCapacity);
-
+=======
+                geneticAlgorithm(itemWeights, itemCounts, binCapacity);
+>>>>>>> e84ca6fd9a6f981d1ab6842c7f68896c7d25ec75
 
                 System.out.println();
             }

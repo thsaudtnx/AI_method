@@ -21,12 +21,7 @@ public class GeneticAlgoSimulator {
                 List<Integer> itemCounts = instance.getItemCounts();
                 int binCapacity = instance.getBinCapacity();
 
-<<<<<<< HEAD
-                //run my genetic algorithm here
-                //geneticAlgorithm(itemWeights, itemCounts, binCapacity);
-=======
                 geneticAlgorithm(itemWeights, itemCounts, binCapacity);
->>>>>>> e84ca6fd9a6f981d1ab6842c7f68896c7d25ec75
 
                 System.out.println();
             }

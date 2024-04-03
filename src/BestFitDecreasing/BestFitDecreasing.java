@@ -6,6 +6,7 @@ import BPP.BPPInstance;
 import java.util.Collections;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.*;
 
 public class BestFitDecreasing {
 
@@ -21,17 +22,17 @@ public class BestFitDecreasing {
                 List<Integer> itemCounts = instance.getItemCounts();
                 int binCapacity = instance.getBinCapacity();
 
-                // Apply Decreasing Algorithm (Sort itemWeights in decreasing order)
-                List<Integer> decreasingItemWeights = new ArrayList<>(itemWeights);
-                Collections.sort(decreasingItemWeights, Collections.reverseOrder());
-
                 // Decreasing First Fit
-                List<Integer> binsDecreasingFirstFit = firstFit(decreasingItemWeights, itemCounts, binCapacity);
+                List<Integer> binsDecreasingFirstFit = firstFitDecreasing(itemWeights, itemCounts, binCapacity);
                 System.out.println("Decreasing First Fit bins: " + binsDecreasingFirstFit.size());
 
                 // Decreasing Best Fit
-                List<Integer> binsDecreasingBestFit = bestFit(decreasingItemWeights, itemCounts, binCapacity);
+                List<Integer> binsDecreasingBestFit = bestFitDecreasing(itemWeights, itemCounts, binCapacity);
                 System.out.println("Decreasing Best Fit bins: " + binsDecreasingBestFit.size());
+
+                // Decreasing Next Fit
+                List<Integer> binsDecreasingNextFit = nextFitDecreasing(itemWeights, itemCounts, binCapacity);
+                System.out.println("Decreasing Next Fit bins: " + binsDecreasingNextFit.size());
 
                 System.out.println();
             }
@@ -40,46 +41,92 @@ public class BestFitDecreasing {
         }
     }
 
-    public static List<Integer> firstFit(List<Integer> itemWeights, List<Integer> itemCounts, int binCapacity) {
-        List<Integer> bins = new ArrayList<>();
+    public static List<Integer> firstFitDecreasing(List<Integer> itemWeights, List<Integer> itemCounts, int binCapacity) {
+        // Set items list with itemWeights of itemCounts
+        List<Integer> items = new ArrayList<>();
         for (int i = 0; i < itemWeights.size(); i++) {
-            int weight = itemWeights.get(i);
-            int count = itemCounts.get(i);
+            for (int j = 0; j < itemCounts.get(i); j++){
+                items.add(itemWeights.get(i));
+            }
+        }
+        // Sort items list in decreasing order
+        Collections.sort(items, Collections.reverseOrder());
+
+        // First Fit Algorithm
+        List<Integer> bins = new ArrayList<>();
+        for (int item : items) {
             boolean packed = false;
             for (int j = 0; j < bins.size(); j++) {
-                if (bins.get(j) + weight <= binCapacity) {
-                    bins.set(j, bins.get(j) + weight);
+                if (bins.get(j) + item <= binCapacity) {
+                    bins.set(j, bins.get(j) + item);
                     packed = true;
                     break;
                 }
             }
             if (!packed) {
-                bins.add(weight);
+                bins.add(item);
             }
         }
         return bins;
     }
 
-    public static List<Integer> bestFit(List<Integer> itemWeights, List<Integer> itemCounts, int binCapacity) {
-        List<Integer> bins = new ArrayList<>();
+    public static List<Integer> bestFitDecreasing(List<Integer> itemWeights, List<Integer> itemCounts, int binCapacity) {
+        // Set items list with itemWeights of itemCounts
+        List<Integer> items = new ArrayList<>();
         for (int i = 0; i < itemWeights.size(); i++) {
-            int weight = itemWeights.get(i);
-            int count = itemCounts.get(i);
+            for (int j = 0; j < itemCounts.get(i); j++){
+                items.add(itemWeights.get(i));
+            }
+        }
+        // Sort items list in decreasing order
+        Collections.sort(items, Collections.reverseOrder());
+
+        // Best Fit Decreasing
+        List<Integer> bins = new ArrayList<>();
+        for (int item : items) {
             int minSpaceIndex = -1;
             int minSpace = Integer.MAX_VALUE;
             for (int j = 0; j < bins.size(); j++) {
                 int spaceLeft = binCapacity - bins.get(j);
-                if (weight <= spaceLeft && spaceLeft < minSpace) {
+                if (item <= spaceLeft && spaceLeft < minSpace) {
                     minSpace = spaceLeft;
                     minSpaceIndex = j;
                 }
             }
             if (minSpaceIndex != -1) {
-                bins.set(minSpaceIndex, bins.get(minSpaceIndex) + weight);
+                bins.set(minSpaceIndex, bins.get(minSpaceIndex) + item);
             } else {
-                bins.add(weight);
+                bins.add(item);
             }
         }
+        return bins;
+    }
+
+    public static List<Integer> nextFitDecreasing(List<Integer> itemWeights, List<Integer> itemCounts, int binCapacity) {
+        // Set items list with itemWeights of itemCounts
+        List<Integer> items = new ArrayList<>();
+        for (int i = 0; i < itemWeights.size(); i++) {
+            for (int j = 0; j < itemCounts.get(i); j++){
+                items.add(itemWeights.get(i));
+            }
+        }
+        // Sort items list in decreasing order
+        Collections.sort(items, Collections.reverseOrder());
+
+        // Next FitDecreasing
+        List<Integer> bins = new ArrayList<>();
+        int currentBinSpace = binCapacity;
+        for (int item : items) {
+            // Check if the item can fit into the current bin
+            if (item <= currentBinSpace) {
+                currentBinSpace -= item;
+            } else {
+                // If not, start a new bin
+                bins.add(binCapacity - currentBinSpace); // Add the remaining space of the current bin
+                currentBinSpace = binCapacity - item; // Start a new bin with the current item's weight
+            }
+        }
+        bins.add(binCapacity - currentBinSpace); // Add the remaining space of the last bin
         return bins;
     }
 }

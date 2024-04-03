@@ -29,7 +29,7 @@ public class GeneticAlgoSimulator {
                 int binCapacity = instance.getBinCapacity();
 
                 //run my genetic algorithm here
-                geneticAlgorithm(itemWeights, itemCounts, binCapacity);
+                //geneticAlgorithm(itemWeights, itemCounts, binCapacity);
 
 
                 System.out.println();

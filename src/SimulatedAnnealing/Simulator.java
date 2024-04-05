@@ -1,14 +1,12 @@
-package GeneticAlgorithm;
+package SimulatedAnnealing;
 
 import BPP.BPPDatasetParser;
 import BPP.BPPInstance;
 
 import java.util.List;
 
-import static GeneticAlgorithm.GeneticAlgorithm.geneticAlgorithm;
 
-
-public class GeneticAlgoSimulator {
+public class Simulator {
     public static void main(String[] args) {
         BPPDatasetParser parser = new BPPDatasetParser();
         List<BPPInstance> instances = parser.parseBPPInstances();
@@ -21,7 +19,8 @@ public class GeneticAlgoSimulator {
                 List<Integer> itemCounts = instance.getItemCounts();
                 int binCapacity = instance.getBinCapacity();
 
-                geneticAlgorithm(itemWeights, itemCounts, binCapacity);
+                SimulatedAnnealing simulatedAnnealing = new SimulatedAnnealing(itemWeights, itemCounts, binCapacity);
+                simulatedAnnealing.simulatedAnnealing();
 
                 System.out.println();
             }

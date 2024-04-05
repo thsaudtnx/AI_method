@@ -5,32 +5,35 @@ import java.util.List;
 import java.util.Random;
 import java.util.Collections;
 
-
 public class GeneticAlgorithm {
+    private final int populationSize;
+    private final double mutationRate;
+    private final int maxGeneration;
+    private final List<Integer> itemWeights;
+    private final List<Integer> itemCounts;
+    private final int binCapacity;
 
-    private static final int POPULATION_SIZE = 100;
-    private static final double MUTATION_RATE = 0.1;
-    private static final int MAX_GENERATIONS = 1000;
-    private static List<Integer> itemWeights;
-    private static List<Integer> itemCounts;
-    private static int binCapacity;
+    public GeneticAlgorithm(List<Integer> itemWeights, List<Integer> itemCounts, int binCapacity, int populationSize, double mutationRate, int maxGeneration){
+        this.itemWeights = itemWeights;
+        this.itemCounts = itemCounts;
+        this.binCapacity = binCapacity;
+        this.populationSize = populationSize;
+        this.mutationRate = mutationRate;
+        this.maxGeneration = maxGeneration;
+    }
 
-    public static void geneticAlgorithm(List<Integer> weights, List<Integer> counts, int capacity) {
-        itemWeights = weights;
-        itemCounts = counts;
-        binCapacity = capacity;
-
+    public void geneticAlgorithm() {
         // Initialize population
         List<Chromosome> population = initializePopulation();
 
         int generation = 0;
-        while (generation < MAX_GENERATIONS) {
+        while (generation < maxGeneration) {
             // Evaluate fitness
             evaluateFitness(population);
 
             // Create new generation
             List<Chromosome> newPopulation = new ArrayList<>();
-            for (int i = 0; i < POPULATION_SIZE; i++) {
+            for (int i = 0; i < populationSize; i++) {
                 Chromosome parent1 = tournamentSelection(population);
                 Chromosome parent2 = tournamentSelection(population);
                 Chromosome offspring = crossover(parent1, parent2);
@@ -69,24 +72,22 @@ public class GeneticAlgorithm {
         }
     }
 
-    private static Chromosome tournamentSelection(List<Chromosome> population) {
+    private Chromosome tournamentSelection(List<Chromosome> population) {
         Random rand = new Random();
         Chromosome parent1 = population.get(rand.nextInt(population.size()));
         Chromosome parent2 = population.get(rand.nextInt(population.size()));
         return (parent1.fitness >= parent2.fitness) ? parent1 : parent2;
     }
 
-
-
-    private static List<Chromosome> initializePopulation() {
+    private List<Chromosome> initializePopulation() {
         List<Chromosome> population = new ArrayList<>();
-        for (int i = 0; i < POPULATION_SIZE; i++) {
+        for (int i = 0; i < populationSize; i++) {
             population.add(generateBestFitChromosome());
         }
         return population;
     }
 
-    private static void evaluateFitness(List<Chromosome> population) {
+    private void evaluateFitness(List<Chromosome> population) {
         for (Chromosome chromosome : population) {
             int totalWeight = 0;
             for (List<Integer> bin : chromosome.bins) {
@@ -103,7 +104,7 @@ public class GeneticAlgorithm {
         }
     }
 
-    private static Chromosome generateBestFitChromosome() {
+    private Chromosome generateBestFitChromosome() {
         List<Integer> decreasingItemWeights = new ArrayList<>(itemWeights);
         Collections.sort(decreasingItemWeights, Collections.reverseOrder());
         List<List<Integer>> bins = new ArrayList<>();
@@ -134,7 +135,7 @@ public class GeneticAlgorithm {
         return new Chromosome(bins);
     }
 
-    private static Chromosome crossover(Chromosome parent1, Chromosome parent2) {
+    private Chromosome crossover(Chromosome parent1, Chromosome parent2) {
         List<List<Integer>> offspringBins = new ArrayList<>();
         int parent1Index = 0, parent2Index = 0;
         while (parent1Index < parent1.bins.size() && parent2Index < parent2.bins.size()) {
@@ -161,7 +162,7 @@ public class GeneticAlgorithm {
         return new Chromosome(offspringBins);
     }
 
-    private static void mutate(Chromosome chromosome) {
+    private void mutate(Chromosome chromosome) {
         Random rand = new Random();
         List<Integer> remainingItems = new ArrayList<>();
         for (int i = 0; i < itemWeights.size(); i++) {
@@ -172,7 +173,7 @@ public class GeneticAlgorithm {
         for (int i = 0; i < chromosome.bins.size(); i++) {
             List<Integer> bin = chromosome.bins.get(i);
             for (int j = 0; j < bin.size(); j++) {
-                if (rand.nextDouble() < MUTATION_RATE) {
+                if (rand.nextDouble() < mutationRate) {
                     bin.remove(j);
                     int minSpaceIndex = -1;
                     int minSpace = Integer.MAX_VALUE;

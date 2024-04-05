@@ -1,23 +1,15 @@
 package TabuSearch;
 
-import BPP.BPPDatasetParser;
-import BPP.BPPInstance;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 public class TabuSearch {
-    private List<List<Integer>> bestSolution;
-    private List<List<Integer>> currentSolution;
-    private List<List<List<Integer>>> tabuList;
-    private int bestFitness;
-    private List<Integer> itemWeights;
-    private List<Integer> itemCounts;
-    private int binCapacity;
-    private int numIterations;
-    private int tabuTenure;
-    private List<Integer> items;
+    private final List<Integer> itemWeights;
+    private final List<Integer> itemCounts;
+    private final int binCapacity;
+    private final int numIterations;
+    private final int tabuTenure;
 
     public TabuSearch(List<Integer> itemWeights, List<Integer> itemCounts, int binCapacity, int numIterations, int tabuTenure){
         this.itemWeights = itemWeights;
@@ -25,38 +17,20 @@ public class TabuSearch {
         this.binCapacity = binCapacity;
         this.numIterations = numIterations;
         this.tabuTenure = tabuTenure;
-
-        // Set items list with itemWeights of itemCounts
-        items = new ArrayList<>();
-        for (int i = 0; i < itemWeights.size(); i++) {
-            for (int j = 0; j < itemCounts.get(i); j++){
-                items.add(itemWeights.get(i));
-            }
-        }
-        bestSolution = new ArrayList<>();
-        currentSolution = new ArrayList<>();
-        tabuList = new ArrayList<>();
-        bestFitness = items.size();
     }
-
-    public void tabuSearch() {
-        // Initialize the currentSolution and bestSolution
-        for (int item : items){
-            List<Integer> temp = new ArrayList<>(){{
-                add(item);
-            }};
-            currentSolution.add(temp);
-            bestSolution.add(temp);
-        }
-
-        // Add currentSolution into the tabuList
-        tabuList.add(currentSolution);
+    public List<List<Integer>> tabuSearch() {
+        // Initialize the currentSolution, bestSolution and tabuList
+        List<List<Integer>> items = generateInitialSolution();
+        List<List<Integer>> bestSolution = items;
+        List<List<Integer>> currentSolution = items;
+        List<List<List<Integer>>> tabuList = new ArrayList<>(){{add(items);}};
+        int bestFitness = items.size();
 
         // Tabu Search
         for (int iter = 0; iter < numIterations; iter++) {
 
             // Generate neighboring solutions
-            List<List<List<Integer>>> neighbors = generateNeighbors();
+            List<List<List<Integer>>> neighbors = generateNeighbors(currentSolution, tabuList);
 
             // Find the best neighbor solution
             List<List<Integer>> bestNeighbor = null;
@@ -81,36 +55,38 @@ public class TabuSearch {
                 bestSolution = bestNeighbor;
                 bestFitness = bestNeighborFitness;
             }
-
         }
+        return bestSolution;
     }
-    public int getBestFitness(){return bestFitness;}
-    private List<List<List<Integer>>> generateNeighbors() {
+    private List<List<List<Integer>>> generateNeighbors(List<List<Integer>> solution, List<List<List<Integer>>> tabuList) {
         List<List<List<Integer>>> neighbors = new ArrayList<>();
 
         // Iterate over each bin in the solution
-        for (int i = 0; i < currentSolution.size(); i++) {
-            List<Integer> bin = currentSolution.get(i);
+        for (int i = 0; i < solution.size(); i++) {
+            List<Integer> bin = solution.get(i);
 
             // Iterate over each item in the current bin
             for (int j = 0; j < bin.size(); j++) {
                 int currentItem = bin.get(j);
 
                 // Try moving the current item to other bins
-                for (int k = 0; k < currentSolution.size(); k++) {
+                for (int k = 0; k < solution.size(); k++) {
                     if (i == k) continue; // Skip the same bin
 
-                    List<List<Integer>> neighbor = new ArrayList<>(currentSolution); // Create a copy of the current solution
+                    // Create a deep copy of the current solution
+                    List<List<Integer>> neighbor = new ArrayList<>();
+                    for (List<Integer> innerList : solution) {
+                        List<Integer> innerCopy = new ArrayList<>(innerList);
+                        neighbor.add(innerCopy);
+                    }
 
                     // Add the current item to the target bin if its weight doesn't exceed the bin capacity
                     if (getBinWeight(neighbor.get(k)) + currentItem <= binCapacity) {
                         neighbor.get(k).add(currentItem); // Add the item to the target bin
-
-                        // Remove the item from the current bin if it's successfully added to the target bin
-                        if (!bin.isEmpty()) {
-                            neighbor.get(i).remove(j);
+                        neighbor.get(i).remove(j); // Remove the item
+                        if (neighbor.get(i).isEmpty()){
+                            neighbor.remove(i); // Remove the empty bin
                         }
-
                         // Add the neighbor solution to the list if it's not in the tabu list
                         if (!tabuList.contains(neighbor)) {
                             neighbors.add(neighbor);
@@ -121,6 +97,26 @@ public class TabuSearch {
         }
 
         return neighbors;
+    }
+    private List<List<Integer>> generateInitialSolution() {
+        // Implement the logic to generate an initial solution
+        // Set items list with itemWeights of itemCounts
+        List<Integer> items = new ArrayList<>();
+        for (int i = 0; i < itemWeights.size(); i++) {
+            for (int j = 0; j < itemCounts.get(i); j++){
+                items.add(itemWeights.get(i));
+            }
+        }
+
+        // Each bin contain each item
+        List<List<Integer>> bins = new ArrayList<>();
+        for (int item : items){
+            bins.add(new ArrayList<>(){{
+                add(item);
+            }});
+        }
+
+        return bins;
     }
     private int getBinWeight(List<Integer> bin) {
         int totalWeight = 0;

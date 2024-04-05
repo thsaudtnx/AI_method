@@ -1,9 +1,10 @@
-package TabuSearch;
+package GeneticAlgorithm;
 
 import BPP.BPPDatasetParser;
 import BPP.BPPInstance;
 
 import java.util.List;
+
 
 public class Simulator {
     public static void main(String[] args) {
@@ -17,14 +18,20 @@ public class Simulator {
                 List<Integer> itemWeights = instance.getItemWeights();
                 List<Integer> itemCounts = instance.getItemCounts();
                 int binCapacity = instance.getBinCapacity();
+                int populationSize = 100;
+                double mutationRate = 0.1;
+                int maxGeneration = 1000;
 
-                int numIterations = 10;
-                int tabuTenure = 10;
+                GeneticAlgorithm geneticAlgorithm = new GeneticAlgorithm(
+                        itemWeights,
+                        itemCounts,
+                        binCapacity,
+                        populationSize,
+                        mutationRate,
+                        maxGeneration
+                );
 
-                // Tabu search
-                TabuSearch tabuSearch = new TabuSearch(itemWeights, itemCounts, binCapacity, numIterations, tabuTenure);
-                List<List<Integer>> tabuSearchBin = tabuSearch.tabuSearch();
-                System.out.println("Tabu search bins: " + tabuSearchBin.size());
+                //geneticAlgorithm.geneticAlgorithm();
 
                 System.out.println();
             }

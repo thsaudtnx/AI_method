@@ -19,20 +19,21 @@ public class TabuSearch {
         this.tabuTenure = tabuTenure;
     }
     public List<List<Integer>> tabuSearch() {
-        // Initialize the currentSolution, bestSolution and tabuList
-        List<List<Integer>> items = generateInitialSolution();
-        List<List<Integer>> bestSolution = items;
-        List<List<Integer>> currentSolution = items;
-        List<List<List<Integer>>> tabuList = new ArrayList<>(){{add(items);}};
-        int bestFitness = items.size();
+        // Initialize the bestSolution, bestFitness and tabuList
+        List<List<Integer>> initialSolution = generateInitialSolution();
+        List<List<Integer>> bestSolution = initialSolution;
+        int bestFitness = initialSolution.size();
+        List<List<List<Integer>>> tabuList = new ArrayList<>(){{
+            add(initialSolution);
+        }};
 
         // Tabu Search
         for (int iter = 0; iter < numIterations; iter++) {
 
             // Generate neighboring solutions
-            List<List<List<Integer>>> neighbors = generateNeighbors(currentSolution, tabuList);
+            List<List<List<Integer>>> neighbors = generateNeighbors(bestSolution);
 
-            // Find the best neighbor solution
+            // Find the best neighbor that is not in the tabu list
             List<List<Integer>> bestNeighbor = null;
             int bestNeighborFitness = Integer.MAX_VALUE;
             for (List<List<Integer>> neighbor : neighbors) {
@@ -43,22 +44,22 @@ public class TabuSearch {
                 }
             }
 
-            // Update the current solution and tabu list
-            currentSolution = bestNeighbor;
-            tabuList.add(bestNeighbor);
-            if (tabuList.size() > tabuTenure) {
-                tabuList.remove(0);
-            }
-
             // Update the best solution
             if (bestNeighborFitness < bestFitness) {
                 bestSolution = bestNeighbor;
                 bestFitness = bestNeighborFitness;
             }
+
+            // Update the tabu list
+            tabuList.add(bestNeighbor);
+            if (tabuList.size() > tabuTenure) {
+                tabuList.remove(0);
+            }
         }
+
         return bestSolution;
     }
-    private List<List<List<Integer>>> generateNeighbors(List<List<Integer>> solution, List<List<List<Integer>>> tabuList) {
+    private List<List<List<Integer>>> generateNeighbors(List<List<Integer>> solution) {
         List<List<List<Integer>>> neighbors = new ArrayList<>();
 
         // Iterate over each bin in the solution
@@ -87,10 +88,7 @@ public class TabuSearch {
                         if (neighbor.get(i).isEmpty()){
                             neighbor.remove(i); // Remove the empty bin
                         }
-                        // Add the neighbor solution to the list if it's not in the tabu list
-                        if (!tabuList.contains(neighbor)) {
-                            neighbors.add(neighbor);
-                        }
+                        neighbors.add(neighbor);
                     }
                 }
             }

@@ -6,12 +6,12 @@ import java.util.Random;
 import java.util.Collections;
 
 public class GeneticAlgorithm {
-    private final int populationSize;
-    private final double mutationRate;
-    private final int maxGeneration;
     private final List<Integer> itemWeights;
     private final List<Integer> itemCounts;
     private final int binCapacity;
+    private final int populationSize;
+    private final double mutationRate;
+    private final int maxGeneration;
 
     public GeneticAlgorithm(List<Integer> itemWeights, List<Integer> itemCounts, int binCapacity, int populationSize, double mutationRate, int maxGeneration){
         this.itemWeights = itemWeights;
@@ -22,64 +22,67 @@ public class GeneticAlgorithm {
         this.maxGeneration = maxGeneration;
     }
 
-    public void geneticAlgorithm() {
+    public int geneticAlgorithm() {
         // Initialize population
-        List<Chromosome> population = initializePopulation();
+        List<Chromosome> currentPopulation = generateInitializePopulation();
 
-        int generation = 0;
-        while (generation < maxGeneration) {
+        // Generations iteration
+        for (int generation = 0; generation < maxGeneration; generation++){
             // Evaluate fitness
-            evaluateFitness(population);
+            evaluateFitness(currentPopulation);
 
             // Create new generation
-            List<Chromosome> newPopulation = new ArrayList<>();
+            List<Chromosome> nextPopulation = new ArrayList<>();
             for (int i = 0; i < populationSize; i++) {
-                Chromosome parent1 = tournamentSelection(population);
-                Chromosome parent2 = tournamentSelection(population);
+                // Selection
+                List<Chromosome> parents = tournamentSelection(currentPopulation);
+                Chromosome parent1 = parents.get(0);
+                Chromosome parent2 = parents.get(1);
+
+                // Crossover
                 Chromosome offspring = crossover(parent1, parent2);
+
+                // Mutation
                 mutate(offspring);
-                newPopulation.add(offspring);
+                nextPopulation.add(offspring);
             }
-            population = newPopulation;
-            generation++;
+
+            // Update the population
+            currentPopulation = nextPopulation;
 
             // Print the best solution in the current generation
-            Chromosome bestChromosome = population.stream()
-                    .sorted((c1, c2) -> Integer.compare(c2.fitness, c1.fitness))
-                    .findFirst()
-                    .orElse(null);
-            if (bestChromosome != null) {
-                System.out.println("Generation " + generation + ": Best Fitness = " + bestChromosome.fitness);
-            }
+            System.out.println("Generation " + generation + "- Best Fitness : " + findBestChromosome(currentPopulation));
         }
 
-        // Print the best solution found
-        Chromosome bestChromosome = population.stream()
-                .sorted((c1, c2) -> Integer.compare(c2.fitness, c1.fitness))
-                .findFirst()
-                .orElse(null);
-        if (bestChromosome != null) {
-            System.out.println("Best Solution:");
-            System.out.println("Fitness: " + bestChromosome.fitness);
-            System.out.println("Bins: " + bestChromosome.bins.size());
-            for (List<Integer> bin : bestChromosome.bins) {
-                System.out.print("Bin: ");
-                for (Integer item : bin) {
-                    System.out.print(item + " ");
-                }
-                System.out.println();
+        // Find the best solution
+        Chromosome bestChromosome = findBestChromosome(currentPopulation);
+
+        // Display the result
+        System.out.println("Best Solution:");
+        System.out.println("Fitness: " + bestChromosome.fitness);
+        System.out.println("Bins: " + bestChromosome.bins.toString());
+        System.out.println();
+
+        return bestChromosome.fitness;
+    }
+
+    private List<Chromosome> tournamentSelection(List<Chromosome> population) {
+        List<Chromosome> parents = new ArrayList<>();
+        Random random = new Random();
+        int tournamentSize = random.nextInt(populationSize);
+        for (int i = 0; i < populationSize; i++) {
+            List<Chromosome> tournament = new ArrayList<>();
+            for (int j = 0; j < tournamentSize; j++) {
+                tournament.add(population.get(random.nextInt(populationSize)));
             }
+            // Select the best individual (solution) from the tournament
+            Chromosome bestChromosome = findBestChromosome(tournament);
+            parents.add(bestChromosome);
         }
+        return parents;
     }
 
-    private Chromosome tournamentSelection(List<Chromosome> population) {
-        Random rand = new Random();
-        Chromosome parent1 = population.get(rand.nextInt(population.size()));
-        Chromosome parent2 = population.get(rand.nextInt(population.size()));
-        return (parent1.fitness >= parent2.fitness) ? parent1 : parent2;
-    }
-
-    private List<Chromosome> initializePopulation() {
+    private List<Chromosome> generateInitializePopulation() {
         List<Chromosome> population = new ArrayList<>();
         for (int i = 0; i < populationSize; i++) {
             population.add(generateBestFitChromosome());
@@ -89,18 +92,7 @@ public class GeneticAlgorithm {
 
     private void evaluateFitness(List<Chromosome> population) {
         for (Chromosome chromosome : population) {
-            int totalWeight = 0;
-            for (List<Integer> bin : chromosome.bins) {
-                int binWeight = bin.stream().mapToInt(Integer::intValue).sum();
-                if (binWeight > binCapacity) {
-                    chromosome.fitness = 0;
-                    break;
-                }
-                totalWeight += binWeight;
-            }
-            if (chromosome.fitness != 0) {
-                chromosome.fitness = totalWeight;
-            }
+            chromosome.fitness = chromosome.bins.size();
         }
     }
 
@@ -199,7 +191,17 @@ public class GeneticAlgorithm {
         }
     }
 
-    private static class Chromosome {
+    private Chromosome findBestChromosome(List<Chromosome> population){
+        Chromosome bestChromosome = population.get(0);
+        for (Chromosome chromosome : population){
+            if (chromosome.fitness < bestChromosome.fitness){
+                bestChromosome = chromosome;
+            }
+        }
+        return bestChromosome;
+    }
+
+    private class Chromosome {
         List<List<Integer>> bins;
         int fitness;
 

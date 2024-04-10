@@ -31,7 +31,8 @@ public class Simulator {
                         maxGeneration
                 );
 
-                //geneticAlgorithm.geneticAlgorithm();
+                int bestFitness = geneticAlgorithm.geneticAlgorithm();
+                System.out.println("Genetic Algorithm : " + bestFitness);
 
                 System.out.println();
             }

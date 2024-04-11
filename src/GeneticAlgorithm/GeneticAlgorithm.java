@@ -45,10 +45,10 @@ public class GeneticAlgorithm {
                 // Mutation
                 mutate(offspring);
                 nextPopulation.add(offspring);
-            }
 
-            // Update the population
-            currentPopulation = nextPopulation;
+                // Update the population (moved it here)
+                currentPopulation = nextPopulation;
+            }
 
             // Print the best solution in the current generation
             System.out.println("Generation " + generation + "- Best Fitness : " + findBestChromosome(currentPopulation));

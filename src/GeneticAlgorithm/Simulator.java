@@ -18,9 +18,9 @@ public class Simulator {
                 List<Integer> itemWeights = instance.getItemWeights();
                 List<Integer> itemCounts = instance.getItemCounts();
                 int binCapacity = instance.getBinCapacity();
-                int populationSize = 100;
+                int populationSize = 10;
                 double mutationRate = 0.1;
-                int maxGeneration = 1000;
+                int maxGeneration = 10;
 
                 GeneticAlgorithm geneticAlgorithm = new GeneticAlgorithm(
                         itemWeights,
@@ -31,10 +31,8 @@ public class Simulator {
                         maxGeneration
                 );
 
-                int bestFitness = geneticAlgorithm.geneticAlgorithm();
-                System.out.println("Genetic Algorithm : " + bestFitness);
-
-                System.out.println();
+                geneticAlgorithm.geneticAlgorithm();
+                break;
             }
         } else {
             System.out.println("Failed to parse the instances.");

@@ -53,7 +53,7 @@
       <recent name="C:\Users\messi\Desktop\Nottingham University\Year 2\sem2\AIM\CW\BinPacking\src" />
     </key>
   </component>
-  <component name="RunManager">
+  <component name="RunManager" selected="Application.Simulator">
     <configuration name="BPPDatasetParser" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="BPP.BPPDatasetParser" />
       <module name="BinPacking" />
@@ -63,13 +63,6 @@
     </configuration>
     <configuration name="BestFitDecreasing" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="BestFitDecreasing.BestFitDecreasing" />
-      <module name="BinPacking" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="BruteForce" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="BruteForce" />
       <module name="BinPacking" />
       <method v="2">
         <option name="Make" enabled="true" />
@@ -89,13 +82,26 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <configuration name="Simulator" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="GeneticAlgorithm.Simulator" />
+      <module name="BinPacking" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="GeneticAlgorithm.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Application.Simulator" />
         <item itemvalue="Application.BestFitDecreasing" />
         <item itemvalue="Application.BPPDatasetParser" />
         <item itemvalue="Application.Greedy" />
         <item itemvalue="Application.Main" />
-        <item itemvalue="Application.BruteForce" />
       </list>
     </recent_temporary>
   </component>

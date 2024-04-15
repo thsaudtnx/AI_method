@@ -4,8 +4,18 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a964f096-4b37-45d2-a1c8-e4fdf6a9601e" name="Changes" comment="Genetic Algo Full">
+    <list default="true" id="22708edf-36cc-44b2-a488-dd5e144caf4d" name="Changes" comment="Finished GeneticAlgorithm">
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_7_4_2024_8_53_pm_[Changes]/shelved.patch" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_7_4_2024_8_53_pm__Changes_.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/BestFitDecreasing/Decreasing.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/BestFitDecreasing/Decreasing.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/BestFitDecreasing/Simulator.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/BestFitDecreasing/Simulator.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/GeneticAlgorithm/GeneticAlgorithm.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/GeneticAlgorithm/GeneticAlgorithm.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/GeneticAlgorithm/Simulator.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/GeneticAlgorithm/Simulator.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/SimulatedAnnealing/SimulatedAnnealing.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/SimulatedAnnealing/SimulatedAnnealing.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/SimulatedAnnealing/Simulator.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/SimulatedAnnealing/Simulator.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/TabuSearch/Simulator.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/TabuSearch/Simulator.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/TabuSearch/TabuSearch.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/TabuSearch/TabuSearch.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -21,6 +31,7 @@
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="UPDATE_TYPE" value="REBASE" />
   </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
@@ -53,14 +64,7 @@
       <recent name="C:\Users\messi\Desktop\Nottingham University\Year 2\sem2\AIM\CW\BinPacking\src" />
     </key>
   </component>
-  <component name="RunManager" selected="Application.Simulator">
-    <configuration name="BPPDatasetParser" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="BPP.BPPDatasetParser" />
-      <module name="BinPacking" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
+  <component name="RunManager" selected="Application.TabuSearch.Simulator">
     <configuration name="BestFitDecreasing" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="BestFitDecreasing.BestFitDecreasing" />
       <module name="BinPacking" />
@@ -68,16 +72,28 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="Greedy" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="Greedy" />
+    <configuration name="BestFitDecreasing.Simulator" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="BestFitDecreasing.Simulator" />
       <module name="BinPacking" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="BestFitDecreasing.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="Main" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="Main" />
+    <configuration name="SimulatedAnnealing.Simulator" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="SimulatedAnnealing.Simulator" />
       <module name="BinPacking" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="SimulatedAnnealing.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
@@ -95,20 +111,33 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <configuration name="TabuSearch.Simulator" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="TabuSearch.Simulator" />
+      <module name="BinPacking" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="TabuSearch.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Application.TabuSearch.Simulator" />
+        <item itemvalue="Application.SimulatedAnnealing.Simulator" />
         <item itemvalue="Application.Simulator" />
+        <item itemvalue="Application.BestFitDecreasing.Simulator" />
         <item itemvalue="Application.BestFitDecreasing" />
-        <item itemvalue="Application.BPPDatasetParser" />
-        <item itemvalue="Application.Greedy" />
-        <item itemvalue="Application.Main" />
       </list>
     </recent_temporary>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="a964f096-4b37-45d2-a1c8-e4fdf6a9601e" name="Changes" comment="" />
+      <changelist id="22708edf-36cc-44b2-a488-dd5e144caf4d" name="Changes" comment="Finished GeneticAlgorithm" />
       <created>1709879988864</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
@@ -138,13 +167,21 @@
       <option name="project" value="LOCAL" />
       <updated>1711003360145</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="Finished GeneticAlgorithm">
+      <created>1713083055988</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1713083055988</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Genetic Algorithm 1 (not fully functional)" />
     <MESSAGE value="Genetic Algorithm (not fully funcitonal)" />
-    <option name="LAST_COMMIT_MESSAGE" value="Genetic Algorithm (not fully funcitonal)" />
+    <MESSAGE value="Finished GeneticAlgorithm" />
+    <option name="LAST_COMMIT_MESSAGE" value="Finished GeneticAlgorithm" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/BinPackingProblem$GeneticAlgoSimulator.ic" NAME="GeneticAlgoSimulator Coverage Results" MODIFIED="1710952484698" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false">

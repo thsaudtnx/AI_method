@@ -16,7 +16,7 @@ public class SimulatedAnnealing {
         this.binCapacity = binCapacity;
         this.temperatures = temperatures;
     }
-    public int simulatedAnnealing(){
+    public void simulatedAnnealing(){
         // Initialize
         List<List<Integer>> currentSolution = generateInitialSolution();
         List<List<Integer>> bestSolution = currentSolution;
@@ -26,11 +26,8 @@ public class SimulatedAnnealing {
         // Display the initial values
         System.out.println("=== Iteration 0 ===");
         System.out.println("Temperature : Null");
-        System.out.print("Current Solution :");
-        for (int i=0;i<currentSolution.size();i++){
-            System.out.print(" " + currentSolution.get(i).toString());
-        }
-        System.out.println("\nCurrent fitness : " + currentFitness);
+        System.out.print("Current Solution : " + currentSolution.toString());
+        System.out.println("Current fitness : " + currentFitness);
         System.out.println();
 
         // Iterations
@@ -65,16 +62,10 @@ public class SimulatedAnnealing {
             // Display the result of iteration
             System.out.println("=== Iteration " + (iteration+1) + " ===");
             System.out.println("Temperature : " + temperatures.get(iteration));
-            System.out.print("Current Solution :");
-            for (int i=0;i<currentSolution.size();i++){
-                System.out.print(" " + currentSolution.get(i).toString());
-            }
-            System.out.println("\nCurrent fitness : " + currentFitness);
+            System.out.print("Current Solution : " + currentSolution.toString());
+            System.out.println("Current fitness : " + currentFitness);
             System.out.println();
         }
-
-
-        return bestFitness;
     }
     private List<List<Integer>> generateInitialSolution() {
         // Implement the logic to generate an initial solution
@@ -98,11 +89,7 @@ public class SimulatedAnnealing {
     }
     private List<List<Integer>> generateNextSolution(final List<List<Integer>> currentSolution) {
         // Make a hard copy of current solution
-        List<List<Integer>> nextSolution = new ArrayList<>();
-        for (List<Integer> innerList : currentSolution) {
-            List<Integer> innerCopy = new ArrayList<>(innerList);
-            nextSolution.add(innerCopy);
-        }
+        List<List<Integer>> nextSolution = new ArrayList<>(currentSolution);
 
         // Random function for choosing the two bins and the item
         Random random = new Random();
@@ -126,16 +113,14 @@ public class SimulatedAnnealing {
         }
 
         // Display the generated next solution
-        System.out.println("from : " + from + ", to : " + to + ", itemIndex : " + itemIndex + ", item : " + item);
-        System.out.print("Next Solution :");
-        for (int i=0;i<nextSolution.size();i++){
-            System.out.print(" " + nextSolution.get(i).toString());
-        }
-        System.out.println("\nNext Fitness : " + evaluateFitness(nextSolution) + "\n");
+        System.out.println("Move the item " + item + " from index " + from + " to index " + to);
+        System.out.println("Next Solution : " + nextSolution.toString());
+        System.out.println("Next Fitness : " + evaluateFitness(nextSolution));
+        System.out.println();
 
         return nextSolution;
     }
-    private double generateAcceptanceProbability(int currentSolution, int nextSolution, double temperature) {
+    private double generateAcceptanceProbability(final int currentSolution, final int nextSolution, final double temperature) {
         return Math.exp((currentSolution - nextSolution) / temperature);
     }
     private int evaluateFitness(final List<List<Integer>> solution) {

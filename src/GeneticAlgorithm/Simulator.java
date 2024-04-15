@@ -32,7 +32,7 @@ public class Simulator {
                 );
 
                 geneticAlgorithm.geneticAlgorithm();
-                break;
+
             }
         } else {
             System.out.println("Failed to parse the instances.");

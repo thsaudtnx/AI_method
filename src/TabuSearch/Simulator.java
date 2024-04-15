@@ -17,14 +17,12 @@ public class Simulator {
                 List<Integer> itemWeights = instance.getItemWeights();
                 List<Integer> itemCounts = instance.getItemCounts();
                 int binCapacity = instance.getBinCapacity();
-
                 int numIterations = 10;
                 int tabuTenure = 10;
 
                 // Tabu search
                 TabuSearch tabuSearch = new TabuSearch(itemWeights, itemCounts, binCapacity, numIterations, tabuTenure);
-                List<List<Integer>> tabuSearchBin = tabuSearch.tabuSearch();
-                System.out.println("Tabu search bins: " + tabuSearchBin.size());
+                tabuSearch.tabuSearch();
 
                 System.out.println();
             }

@@ -21,17 +21,10 @@ public class Simulator {
                 // Initialize
                 Decreasing decreasing = new Decreasing(itemWeights, itemCounts, binCapacity);
 
-                // Decreasing First Fit
-                List<Integer> binsDecreasingFirstFit = decreasing.firstFitDecreasing();
-                System.out.println("Decreasing First Fit bins: " + binsDecreasingFirstFit.size());
-
-                // Decreasing Best Fit
-                List<Integer> binsDecreasingBestFit = decreasing.bestFitDecreasing();
-                System.out.println("Decreasing Best Fit bins: " + binsDecreasingBestFit.size());
-
-                // Decreasing Next Fit
-                List<Integer> binsDecreasingNextFit = decreasing.nextFitDecreasing();
-                System.out.println("Decreasing Next Fit bins: " + binsDecreasingNextFit.size());
+                // Decreasing Algorithms
+                decreasing.firstFitDecreasing();
+                decreasing.bestFitDecreasing();
+                decreasing.nextFitDecreasing();
 
                 System.out.println();
             }

@@ -62,8 +62,7 @@ public class Simulator {
                 temperatures.add(t5);
 
                 SimulatedAnnealing simulatedAnnealing = new SimulatedAnnealing(itemWeights, itemCounts, binCapacity, temperatures);
-                int bestFitness = simulatedAnnealing.simulatedAnnealing();
-                System.out.println("Simulated Annealing : " + bestFitness);
+                simulatedAnnealing.simulatedAnnealing();
 
                 System.out.println();
             }

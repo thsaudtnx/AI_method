@@ -1,7 +1,6 @@
 package TabuSearch;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class TabuSearch {
@@ -10,7 +9,6 @@ public class TabuSearch {
     private final int binCapacity;
     private final int numIterations;
     private final int tabuTenure;
-
     public TabuSearch(List<Integer> itemWeights, List<Integer> itemCounts, int binCapacity, int numIterations, int tabuTenure){
         this.itemWeights = itemWeights;
         this.itemCounts = itemCounts;
@@ -18,36 +16,44 @@ public class TabuSearch {
         this.numIterations = numIterations;
         this.tabuTenure = tabuTenure;
     }
-    public List<List<Integer>> tabuSearch() {
-        // Initialize the bestSolution, bestFitness and tabuList
-        List<List<Integer>> initialSolution = generateInitialSolution();
-        List<List<Integer>> bestSolution = initialSolution;
-        int bestFitness = initialSolution.size();
-        List<List<List<Integer>>> tabuList = new ArrayList<>(){{
-            add(initialSolution);
-        }};
+    public void tabuSearch() {
+        // Initialize the bestSolution and tabuList
+        Solution initialSolution = generateInitialSolution();
+        Solution bestSolution = initialSolution;
+        List<Solution> tabuList = new ArrayList<>();
+        tabuList.add(initialSolution);
+
+        // Display the initial solution
+        System.out.println("Initial Solution");
+        System.out.println("Bins : " + initialSolution.bins.toString());
+        System.out.println("Fitness : " + initialSolution.fitness);
+        System.out.println();
 
         // Tabu Search
-        for (int iter = 0; iter < numIterations; iter++) {
-
+        for (int iteration = 0; iteration < numIterations; iteration++) {
             // Generate neighboring solutions
-            List<List<List<Integer>>> neighbors = generateNeighbors(bestSolution);
+            List<Solution> neighbors = generateNeighbors(bestSolution);
+
+            // Display the neighbors
+            System.out.println("Iteration " + iteration);
+            for (int i=0;i<neighbors.size();i++){
+                System.out.println("Neighbor " + i + " " + neighbors.get(i).bins.toString());
+            }
+            System.out.println();
 
             // Find the best neighbor that is not in the tabu list
-            List<List<Integer>> bestNeighbor = null;
+            Solution bestNeighbor = null;
             int bestNeighborFitness = Integer.MAX_VALUE;
-            for (List<List<Integer>> neighbor : neighbors) {
-                int fitness = evaluateFitness(neighbor);
-                if (!tabuList.contains(neighbor) && fitness < bestNeighborFitness) {
+            for (Solution neighbor : neighbors) {
+                if (!tabuList.contains(neighbor) && neighbor.fitness < bestNeighborFitness) {
                     bestNeighbor = neighbor;
-                    bestNeighborFitness = fitness;
+                    bestNeighborFitness = neighbor.fitness;
                 }
             }
 
             // Update the best solution
-            if (bestNeighborFitness < bestFitness) {
+            if (bestNeighborFitness < bestSolution.fitness) {
                 bestSolution = bestNeighbor;
-                bestFitness = bestNeighborFitness;
             }
 
             // Update the tabu list
@@ -55,39 +61,59 @@ public class TabuSearch {
             if (tabuList.size() > tabuTenure) {
                 tabuList.remove(0);
             }
+
+            // Display the best neighbor and tabu list
+            System.out.println("Tabu list : ");
+            for (int i=0;i<tabuList.size();i++){
+                System.out.print(tabuList.get(i).bins.toString());
+            }
+            System.out.println();
+            System.out.println("Best Neighbor");
+            System.out.println("Bins : " + bestNeighbor.bins.toString());
+            System.out.println("Fitness : " + bestNeighbor.fitness);
+            System.out.println();
         }
 
-        return bestSolution;
+        // Display the best neighbor and tabu list
+        System.out.println("Best Solution");
+        System.out.println("Bin : " + bestSolution.bins.toString());
+        System.out.println("Fitness : " + bestSolution.fitness);
+        System.out.println();
     }
-    private List<List<List<Integer>>> generateNeighbors(List<List<Integer>> solution) {
-        List<List<List<Integer>>> neighbors = new ArrayList<>();
+    private List<Solution> generateNeighbors(Solution solution) {
+        List<Solution> neighbors = new ArrayList<>();
 
         // Iterate over each bin in the solution
-        for (int i = 0; i < solution.size(); i++) {
-            List<Integer> bin = solution.get(i);
+        for (int i = 0; i < solution.bins.size(); i++) {
+            List<Integer> bin = solution.bins.get(i);
 
             // Iterate over each item in the current bin
             for (int j = 0; j < bin.size(); j++) {
                 int currentItem = bin.get(j);
 
                 // Try moving the current item to other bins
-                for (int k = 0; k < solution.size(); k++) {
+                for (int k = 0; k < solution.bins.size(); k++) {
                     if (i == k) continue; // Skip the same bin
 
                     // Create a deep copy of the current solution
-                    List<List<Integer>> neighbor = new ArrayList<>();
-                    for (List<Integer> innerList : solution) {
-                        List<Integer> innerCopy = new ArrayList<>(innerList);
-                        neighbor.add(innerCopy);
+                    List<List<Integer>> bins = new ArrayList<>();
+                    for (List<Integer> innerList : solution.bins) {
+                        List<Integer> binCopy = new ArrayList<>(innerList);
+                        bins.add(binCopy);
                     }
 
                     // Add the current item to the target bin if its weight doesn't exceed the bin capacity
-                    if (getBinWeight(neighbor.get(k)) + currentItem <= binCapacity) {
-                        neighbor.get(k).add(currentItem); // Add the item to the target bin
-                        neighbor.get(i).remove(j); // Remove the item
-                        if (neighbor.get(i).isEmpty()){
-                            neighbor.remove(i); // Remove the empty bin
+                    if (getBinWeight(bins.get(k)) + currentItem <= binCapacity) {
+                        bins.get(k).add(currentItem); // Add the item to the target bin
+                        bins.get(i).remove(j); // Remove the item
+
+                        // Remove the empty bin
+                        if (bins.get(i).isEmpty()){
+                            bins.remove(i);
                         }
+
+                        // Add the neighbor into the neighbors
+                        Solution neighbor = new Solution(bins);
                         neighbors.add(neighbor);
                     }
                 }
@@ -96,7 +122,7 @@ public class TabuSearch {
 
         return neighbors;
     }
-    private List<List<Integer>> generateInitialSolution() {
+    private Solution generateInitialSolution() {
         // Implement the logic to generate an initial solution
         // Set items list with itemWeights of itemCounts
         List<Integer> items = new ArrayList<>();
@@ -114,7 +140,9 @@ public class TabuSearch {
             }});
         }
 
-        return bins;
+        Solution solution = new Solution(bins);
+
+        return solution;
     }
     private int getBinWeight(List<Integer> bin) {
         int totalWeight = 0;
@@ -123,9 +151,13 @@ public class TabuSearch {
         }
         return totalWeight;
     }
-    private int evaluateFitness(List<List<Integer>> solution) {
-        // Count the number of bins
-        return solution.size();
+    private class Solution {
+        private List<List<Integer>> bins;
+        private int fitness;
+        public Solution(List<List<Integer>> bins){
+            this.bins = bins;
+            this.fitness = bins.size();
+        }
     }
 }
 

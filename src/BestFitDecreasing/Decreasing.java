@@ -47,6 +47,13 @@ public class Decreasing {
     }
 
     public void bestFitDecreasing() {
+
+        // Set the start time
+        long startTime = System.currentTimeMillis();
+        Runtime runtime = Runtime.getRuntime();
+        // Run garbage collector to free up memory
+        runtime.gc();
+
         // Set items list with itemWeights of itemCounts
         List<Integer> items = generateSortedItems();
 
@@ -71,11 +78,18 @@ public class Decreasing {
             }
         }
 
+        // Calculate the runtime
+        long endTime = System.currentTimeMillis();
+        long totalTime = endTime - startTime;
+        System.out.println("Total execution time: " + totalTime + " milliseconds");
+
+        // Calculate the used memory
+        long memory = runtime.totalMemory() - runtime.freeMemory();
+        System.out.println("Used memory: " + memory + " bytes");
+
         // Display the result
-        System.out.println("Best Fit Decreasing");
-        System.out.print("Bins : " + bins.toString());
-        System.out.println();
-        System.out.println("Fitness : " + bins.size());
+        System.out.println("Bins : " + bins.toString());
+        System.out.println("Number of bin used : " + bins.size());
         System.out.println();
     }
 

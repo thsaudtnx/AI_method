@@ -2,6 +2,7 @@ package TabuSearch;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class TabuSearch {
     private final List<Integer> itemWeights;
@@ -17,6 +18,13 @@ public class TabuSearch {
         this.tabuTenure = tabuTenure;
     }
     public void tabuSearch() {
+
+        // Set the start time
+        long startTime = System.currentTimeMillis();
+        Runtime runtime = Runtime.getRuntime();
+        // Run garbage collector to free up memory
+        runtime.gc();
+
         // Initialize the bestSolution and tabuList
         Solution initialSolution = generateInitialSolution();
         Solution bestSolution = initialSolution;
@@ -74,10 +82,18 @@ public class TabuSearch {
             System.out.println();
         }
 
-        // Display the best neighbor and tabu list
-        System.out.println("Best Solution");
+        // Calculate the runtime
+        long endTime = System.currentTimeMillis();
+        long totalTime = endTime - startTime;
+        System.out.println("Total execution time: " + totalTime + " milliseconds");
+
+        // Calculate the used memory
+        long memory = runtime.totalMemory() - runtime.freeMemory();
+        System.out.println("Used memory: " + memory + " bytes");
+
+        // Display the result
         System.out.println("Bin : " + bestSolution.bins.toString());
-        System.out.println("Fitness : " + bestSolution.fitness);
+        System.out.println("Number of bins used : " + bestSolution.fitness);
         System.out.println();
     }
     private List<Solution> generateNeighbors(Solution solution) {
@@ -132,12 +148,34 @@ public class TabuSearch {
             }
         }
 
-        // Each bin contain each item
+        // Initialize the visited array
+        List<Boolean> visited = new ArrayList();
+        for (int i=0;i<items.size();i++){
+            visited.add(false);
+        }
+
+        // Create bins with random
+        Random random = new Random();
         List<List<Integer>> bins = new ArrayList<>();
-        for (int item : items){
-            bins.add(new ArrayList<>(){{
-                add(item);
-            }});
+        List<Integer> firstBin = new ArrayList<>();
+        bins.add(firstBin);
+        int binIndex = 0;
+        for (int i=0;i<items.size();i++) {
+            while (true) {
+                int itemIndex = random.nextInt(items.size());
+                if (!visited.get(itemIndex)){
+                    visited.set(itemIndex, true);
+                    if (getBinWeight(bins.get(binIndex)) + items.get(itemIndex) <= binCapacity){
+                        bins.get(binIndex).add(items.get(itemIndex));
+                    } else {
+                        binIndex += 1;
+                        List<Integer> bin = new ArrayList<>();
+                        bin.add(items.get(itemIndex));
+                        bins.add(bin);
+                    }
+                    break;
+                }
+            }
         }
 
         Solution solution = new Solution(bins);

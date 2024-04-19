@@ -11,18 +11,27 @@ public class GeneticAlgorithm {
     private final int binCapacity;
     private final int populationSize;
     private final double mutationRate;
+    private final double crossoverRate;
     private final int maxGeneration;
 
-    public GeneticAlgorithm(List<Integer> itemWeights, List<Integer> itemCounts, int binCapacity, int populationSize, double mutationRate, int maxGeneration){
+    public GeneticAlgorithm(List<Integer> itemWeights, List<Integer> itemCounts, int binCapacity, int populationSize, double mutationRate, double crossoverRate, int maxGeneration){
         this.itemWeights = itemWeights;
         this.itemCounts = itemCounts;
         this.binCapacity = binCapacity;
         this.populationSize = populationSize;
         this.mutationRate = mutationRate;
+        this.crossoverRate = crossoverRate;
         this.maxGeneration = maxGeneration;
     }
 
     public void geneticAlgorithm() {
+
+        // Set the start time
+        long startTime = System.currentTimeMillis();
+        Runtime runtime = Runtime.getRuntime();
+        // Run garbage collector to free up memory
+        runtime.gc();
+
         // Initialize population
         List<Chromosome> currentPopulation = generateInitializePopulation();
 
@@ -32,7 +41,6 @@ public class GeneticAlgorithm {
             System.out.println("Chromosome " + i + " " + currentPopulation.get(i).bins.toString());
         }
         System.out.println();
-
 
 
         // Generations iteration
@@ -48,19 +56,8 @@ public class GeneticAlgorithm {
                 Chromosome parent1 = selection(currentPopulation);
                 Chromosome parent2 = selection(currentPopulation);
 
-                for (List<Integer> bin : parent1.bins){
-                    if (bin.isEmpty()){
-                        System.out.println("== There is an empty bin!");
-                    }
-                }
-                for (List<Integer> bin : parent2.bins){
-                    if (bin.isEmpty()){
-                        System.out.println("== There is an empty bin!");
-                    }
-                }
-
                 // Crossover
-                Chromosome offspring = crossover(parent1, parent2);
+                Chromosome offspring = crossover(parent1, parent2, crossoverRate);
 
                 // Mutation
                 Chromosome newChromosome = mutate(offspring, mutationRate);
@@ -70,7 +67,6 @@ public class GeneticAlgorithm {
 
                 System.out.println("New Chromosome : " + newChromosome.bins.toString());
                 System.out.println();
-                System.out.println("------------------------------------------------");
             }
 
             // Update the population (moved it here)
@@ -87,12 +83,18 @@ public class GeneticAlgorithm {
         // Find the best solution
         Chromosome bestChromosome = findBestChromosome(currentPopulation);
 
-        // Display the result
-        System.out.println("Best Solution:");
-        System.out.println("Fitness: " + bestChromosome.fitness);
-        System.out.println("Bins: " + bestChromosome.bins.toString());
-        System.out.println();
+        // Calculate the runtime
+        long endTime = System.currentTimeMillis();
+        long totalTime = endTime - startTime;
+        System.out.println("Total execution time: " + totalTime + " milliseconds");
 
+        // Calculate the used memory
+        long memory = runtime.totalMemory() - runtime.freeMemory();
+        System.out.println("Used memory: " + memory + " bytes");
+
+        // Display the result
+        System.out.println("Number of bin used: " + bestChromosome.fitness);
+        System.out.println("Bins: " + bestChromosome.bins.toString());
     }
 
     private Chromosome selection(final List<Chromosome> population) {
@@ -189,10 +191,19 @@ public class GeneticAlgorithm {
         return new Chromosome(bins);
     }
 
-    private Chromosome crossover(final Chromosome parent1, final Chromosome parent2) {
+    private Chromosome crossover(final Chromosome parent1, final Chromosome parent2, final double crossoverRate) {
         // Simple Crossover
         List<List<Integer>> bins = new ArrayList<>();
         Random random = new Random();
+
+        // Check if crossover should occur based on crossover rate
+        if (random.nextDouble() > crossoverRate) {
+            // If crossover rate is not met, return one of the parents
+            boolean parent = random.nextBoolean();
+            bins = new ArrayList<>(parent ? parent1.bins : parent2.bins);
+            return new Chromosome(bins);
+        }
+
         int size = parent1.bins.size() > parent2.bins.size() ? parent2.bins.size() : parent1.bins.size();
 
         // Choose a random crossover point

@@ -1,5 +1,7 @@
 package SimulatedAnnealing;
 
+import GeneticAlgorithm.GeneticAlgorithm;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -17,6 +19,13 @@ public class SimulatedAnnealing {
         this.temperatures = temperatures;
     }
     public void simulatedAnnealing(){
+
+        // Set the start time
+        long startTime = System.currentTimeMillis();
+        Runtime runtime = Runtime.getRuntime();
+        // Run garbage collector to free up memory
+        runtime.gc();
+
         // Initialize
         List<List<Integer>> currentSolution = generateInitialSolution();
         List<List<Integer>> bestSolution = currentSolution;
@@ -66,6 +75,19 @@ public class SimulatedAnnealing {
             System.out.println("Current fitness : " + currentFitness);
             System.out.println();
         }
+
+        // Calculate the runtime
+        long endTime = System.currentTimeMillis();
+        long totalTime = endTime - startTime;
+        System.out.println("Total execution time: " + totalTime + " milliseconds");
+
+        // Calculate the used memory
+        long memory = runtime.totalMemory() - runtime.freeMemory();
+        System.out.println("Used memory: " + memory + " bytes");
+
+        // Display the result
+        System.out.println("Bins: " + bestSolution.toString());
+        System.out.println("Number of bin used: " + bestFitness);
     }
     private List<List<Integer>> generateInitialSolution() {
         // Implement the logic to generate an initial solution
@@ -77,12 +99,34 @@ public class SimulatedAnnealing {
             }
         }
 
-        // Each bin contain each item
+        // Initialize the visited array
+        List<Boolean> visited = new ArrayList();
+        for (int i=0;i<items.size();i++){
+            visited.add(false);
+        }
+
+        // Create bins with random
+        Random random = new Random();
         List<List<Integer>> bins = new ArrayList<>();
-        for (int item : items){
-            bins.add(new ArrayList<>(){{
-                add(item);
-            }});
+        List<Integer> firstBin = new ArrayList<>();
+        bins.add(firstBin);
+        int binIndex = 0;
+        for (int i=0;i<items.size();i++) {
+            while (true) {
+                int itemIndex = random.nextInt(items.size());
+                if (!visited.get(itemIndex)){
+                    visited.set(itemIndex, true);
+                    if (getBinWeight(bins.get(binIndex)) + items.get(itemIndex) <= binCapacity){
+                        bins.get(binIndex).add(items.get(itemIndex));
+                    } else {
+                        binIndex += 1;
+                        List<Integer> bin = new ArrayList<>();
+                        bin.add(items.get(itemIndex));
+                        bins.add(bin);
+                    }
+                    break;
+                }
+            }
         }
 
         return bins;

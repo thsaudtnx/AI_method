@@ -23,8 +23,6 @@ public class Simulator {
                 // Tabu search
                 TabuSearch tabuSearch = new TabuSearch(itemWeights, itemCounts, binCapacity, numIterations, tabuTenure);
                 tabuSearch.tabuSearch();
-
-                System.out.println();
             }
         } else {
             System.out.println("Failed to parse the instances.");

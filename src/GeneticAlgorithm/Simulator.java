@@ -20,6 +20,7 @@ public class Simulator {
                 int binCapacity = instance.getBinCapacity();
                 int populationSize = 10;
                 double mutationRate = 0.1;
+                double crossoverRate = 0.1;
                 int maxGeneration = 10;
 
                 GeneticAlgorithm geneticAlgorithm = new GeneticAlgorithm(
@@ -28,6 +29,7 @@ public class Simulator {
                         binCapacity,
                         populationSize,
                         mutationRate,
+                        crossoverRate,
                         maxGeneration
                 );
 

@@ -63,8 +63,6 @@ public class Simulator {
 
                 SimulatedAnnealing simulatedAnnealing = new SimulatedAnnealing(itemWeights, itemCounts, binCapacity, temperatures);
                 simulatedAnnealing.simulatedAnnealing();
-
-                System.out.println();
             }
         } else {
             System.out.println("Failed to parse the instances.");

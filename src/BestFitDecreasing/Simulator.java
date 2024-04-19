@@ -22,11 +22,9 @@ public class Simulator {
                 Decreasing decreasing = new Decreasing(itemWeights, itemCounts, binCapacity);
 
                 // Decreasing Algorithms
-                decreasing.firstFitDecreasing();
+                //decreasing.firstFitDecreasing();
                 decreasing.bestFitDecreasing();
-                decreasing.nextFitDecreasing();
-
-                System.out.println();
+                //decreasing.nextFitDecreasing();
             }
         } else {
             System.out.println("Failed to parse the instances.");

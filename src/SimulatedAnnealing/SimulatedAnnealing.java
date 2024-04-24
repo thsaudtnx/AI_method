@@ -1,7 +1,5 @@
 package SimulatedAnnealing;
 
-import GeneticAlgorithm.GeneticAlgorithm;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -19,7 +17,6 @@ public class SimulatedAnnealing {
         this.temperatures = temperatures;
     }
     public void simulatedAnnealing(){
-
         // Set the start time
         long startTime = System.currentTimeMillis();
         Runtime runtime = Runtime.getRuntime();
@@ -33,11 +30,11 @@ public class SimulatedAnnealing {
         int bestFitness = currentFitness;
 
         // Display the initial values
-        System.out.println("=== Iteration 0 ===");
-        System.out.println("Temperature : Null");
-        System.out.print("Current Solution : " + currentSolution.toString());
-        System.out.println("Current fitness : " + currentFitness);
-        System.out.println();
+        // System.out.println("=== Iteration 0 ===");
+        // System.out.println("Temperature : Null");
+        // System.out.print("Current Solution : " + currentSolution.toString());
+        // System.out.println("Current fitness : " + currentFitness);
+        // System.out.println();
 
         // Iterations
         for (int iteration = 0; iteration < temperatures.size(); iteration++){
@@ -69,11 +66,11 @@ public class SimulatedAnnealing {
             }
 
             // Display the result of iteration
-            System.out.println("=== Iteration " + (iteration+1) + " ===");
-            System.out.println("Temperature : " + temperatures.get(iteration));
-            System.out.print("Current Solution : " + currentSolution.toString());
-            System.out.println("Current fitness : " + currentFitness);
-            System.out.println();
+            // System.out.println("=== Iteration " + (iteration+1) + " ===");
+            // System.out.println("Temperature : " + temperatures.get(iteration));
+            // System.out.print("Current Solution : " + currentSolution.toString());
+            // System.out.println("Current fitness : " + currentFitness);
+            // System.out.println();
         }
 
         // Calculate the runtime
@@ -88,6 +85,7 @@ public class SimulatedAnnealing {
         // Display the result
         System.out.println("Bins: " + bestSolution.toString());
         System.out.println("Number of bin used: " + bestFitness);
+        System.out.println();
     }
     private List<List<Integer>> generateInitialSolution() {
         // Implement the logic to generate an initial solution
@@ -137,14 +135,18 @@ public class SimulatedAnnealing {
 
         // Random function for choosing the two bins and the item
         Random random = new Random();
-        int from = random.nextInt(nextSolution.size());
-        int itemIndex = random.nextInt(nextSolution.get(from).size());
-        int item = nextSolution.get(from).get(itemIndex);
+        int from;
         int to;
+        int itemIndex;
+        int item;
         int totalItemWeight;
+
         do {
-            // from and to bin cannot be same
+            // Random generate from, to, itemIndex
+            from = random.nextInt(nextSolution.size());
             to = random.nextInt(nextSolution.size());
+            itemIndex = random.nextInt(nextSolution.get(from).size());
+            item = nextSolution.get(from).get(itemIndex);
             // Check the total Item weight doesn't exceed the bin capacity
             totalItemWeight = getBinWeight(nextSolution.get(to)) + item;
         } while (from == to || totalItemWeight > binCapacity);
@@ -157,10 +159,10 @@ public class SimulatedAnnealing {
         }
 
         // Display the generated next solution
-        System.out.println("Move the item " + item + " from index " + from + " to index " + to);
-        System.out.println("Next Solution : " + nextSolution.toString());
-        System.out.println("Next Fitness : " + evaluateFitness(nextSolution));
-        System.out.println();
+        // System.out.println("Move the item " + item + " from index " + from + " to index " + to);
+        // System.out.println("Next Solution : " + nextSolution.toString());
+        // System.out.println("Next Fitness : " + evaluateFitness(nextSolution));
+        // System.out.println();
 
         return nextSolution;
     }

@@ -4,17 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="22708edf-36cc-44b2-a488-dd5e144caf4d" name="Changes" comment="Fixed the error">
+    <list default="true" id="22708edf-36cc-44b2-a488-dd5e144caf4d" name="Changes" comment="Added memory usage and runtime checker">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/BestFitDecreasing/Decreasing.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/BestFitDecreasing/Decreasing.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/BestFitDecreasing/Simulator.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/BestFitDecreasing/Simulator.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/GeneticAlgorithm/GeneticAlgorithm.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/GeneticAlgorithm/GeneticAlgorithm.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/GeneticAlgorithm/Simulator.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/GeneticAlgorithm/Simulator.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Main.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/SimulatedAnnealing/SimulatedAnnealing.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/SimulatedAnnealing/SimulatedAnnealing.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/SimulatedAnnealing/Simulator.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/SimulatedAnnealing/Simulator.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/TabuSearch/Simulator.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/TabuSearch/Simulator.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/TabuSearch/TabuSearch.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/TabuSearch/TabuSearch.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -180,7 +172,14 @@
       <option name="project" value="LOCAL" />
       <updated>1713164127069</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="Added memory usage and runtime checker">
+      <created>1713542282789</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1713542282789</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -188,7 +187,8 @@
     <MESSAGE value="Genetic Algorithm (not fully funcitonal)" />
     <MESSAGE value="Finished GeneticAlgorithm" />
     <MESSAGE value="Fixed the error" />
-    <option name="LAST_COMMIT_MESSAGE" value="Fixed the error" />
+    <MESSAGE value="Added memory usage and runtime checker" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added memory usage and runtime checker" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/BinPackingProblem$GeneticAlgoSimulator.ic" NAME="GeneticAlgoSimulator Coverage Results" MODIFIED="1710952484698" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false">

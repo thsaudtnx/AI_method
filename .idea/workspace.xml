@@ -4,9 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="22708edf-36cc-44b2-a488-dd5e144caf4d" name="Changes" comment="Added memory usage and runtime checker">
+    <list default="true" id="22708edf-36cc-44b2-a488-dd5e144caf4d" name="Changes" comment="Fixed error on Simulated Annealing">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/SimulatedAnnealing/SimulatedAnnealing.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/SimulatedAnnealing/SimulatedAnnealing.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/BestFitDecreasing/Decreasing.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/BestFitDecreasing/Decreasing.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/BestFitDecreasing/Simulator.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/BestFitDecreasing/Simulator.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/GeneticAlgorithm/GeneticAlgorithm.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/GeneticAlgorithm/GeneticAlgorithm.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -55,7 +57,7 @@
       <recent name="C:\Users\messi\Desktop\Nottingham University\Year 2\sem2\AIM\CW\BinPacking\src" />
     </key>
   </component>
-  <component name="RunManager" selected="Application.SimulatedAnnealing.Simulator">
+  <component name="RunManager" selected="Application.TabuSearch.Simulator">
     <configuration name="BestFitDecreasing" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="BestFitDecreasing.BestFitDecreasing" />
       <module name="BinPacking" />
@@ -117,10 +119,10 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Application.TabuSearch.Simulator" />
         <item itemvalue="Application.SimulatedAnnealing.Simulator" />
         <item itemvalue="Application.Simulator" />
         <item itemvalue="Application.BestFitDecreasing.Simulator" />
-        <item itemvalue="Application.TabuSearch.Simulator" />
         <item itemvalue="Application.BestFitDecreasing" />
       </list>
     </recent_temporary>
@@ -179,7 +181,14 @@
       <option name="project" value="LOCAL" />
       <updated>1713542282789</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="Fixed error on Simulated Annealing">
+      <created>1713971651753</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1713971651753</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -188,7 +197,8 @@
     <MESSAGE value="Finished GeneticAlgorithm" />
     <MESSAGE value="Fixed the error" />
     <MESSAGE value="Added memory usage and runtime checker" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added memory usage and runtime checker" />
+    <MESSAGE value="Fixed error on Simulated Annealing" />
+    <option name="LAST_COMMIT_MESSAGE" value="Fixed error on Simulated Annealing" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/BinPackingProblem$GeneticAlgoSimulator.ic" NAME="GeneticAlgoSimulator Coverage Results" MODIFIED="1710952484698" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false">

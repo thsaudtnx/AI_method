@@ -15,37 +15,6 @@ public class Decreasing {
         this.binCapacity = binCapacity;
     }
 
-    public void firstFitDecreasing() {
-        // Set items list with itemWeights of itemCounts
-        List<Integer> items = generateSortedItems();
-
-        // First Fit Algorithm
-        List<List<Integer>> bins = new ArrayList<>();
-        for (int item : items) {
-            boolean packed = false;
-            for (List<Integer> bin : bins) {
-                if (getBinWeight(bin) + item <= binCapacity) {
-                    bin.add(item);
-                    packed = true;
-                    break;
-                }
-            }
-            if (!packed) {
-                List<Integer> bin = new ArrayList<>();
-                bin.add(item);
-                bins.add(bin);
-            }
-        }
-
-        // Display the result
-        System.out.println("First Fit Decreasing");
-        System.out.print("Bins : " + bins.toString());
-        System.out.println();
-        System.out.println("Fitness : " + bins.size());
-        System.out.println();
-
-    }
-
     public void bestFitDecreasing() {
 
         // Set the start time
@@ -92,35 +61,6 @@ public class Decreasing {
         System.out.println("Number of bin used : " + bins.size());
         System.out.println();
     }
-
-    public void nextFitDecreasing() {
-        // Set items list with itemWeights of itemCounts
-        List<Integer> items = generateSortedItems();
-
-        // Next Fit Decreasing
-        List<List<Integer>> bins = new ArrayList<>();
-        List<Integer> bin = new ArrayList<>();
-        for (int item : items) {
-            // Check if the item can fit into the current bin
-            if (getBinWeight(bin) + item <= binCapacity) {
-                bin.add(item);
-            } else {
-                // If not, start a new bin
-                bins.add(bin);
-                bin = new ArrayList<>();
-                bin.add(item);
-            }
-        }
-        bins.add(bin); // Add the remaining space of the last bin
-
-        // Display the result
-        System.out.println("Next Fit Decreasing");
-        System.out.print("Bins : " + bins.toString());
-        System.out.println();
-        System.out.println("Fitness : " + bins.size());
-        System.out.println();
-    }
-
     private List<Integer> generateSortedItems(){
         // Set items list with itemWeights of itemCounts
         List<Integer> items = new ArrayList<>();

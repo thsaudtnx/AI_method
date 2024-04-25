@@ -18,13 +18,8 @@ public class Simulator {
                 List<Integer> itemCounts = instance.getItemCounts();
                 int binCapacity = instance.getBinCapacity();
 
-                // Initialize
                 Decreasing decreasing = new Decreasing(itemWeights, itemCounts, binCapacity);
-
-                // Decreasing Algorithms
-                //decreasing.firstFitDecreasing();
                 decreasing.bestFitDecreasing();
-                //decreasing.nextFitDecreasing();
             }
         } else {
             System.out.println("Failed to parse the instances.");

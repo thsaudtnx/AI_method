@@ -1,6 +1,7 @@
 package SimulatedAnnealing;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
@@ -88,47 +89,39 @@ public class SimulatedAnnealing {
         System.out.println();
     }
     private List<List<Integer>> generateInitialSolution() {
-        // Implement the logic to generate an initial solution
-        // Set items list with itemWeights of itemCounts
+        // Generate list of items based on their weights and counts
         List<Integer> items = new ArrayList<>();
         for (int i = 0; i < itemWeights.size(); i++) {
-            for (int j = 0; j < itemCounts.get(i); j++){
+            for (int j = 0; j < itemCounts.get(i); j++) {
                 items.add(itemWeights.get(i));
             }
         }
 
-        // Initialize the visited array
-        List<Boolean> visited = new ArrayList();
-        for (int i=0;i<items.size();i++){
-            visited.add(false);
-        }
+        // Optional: sort items by weight in descending order for First Fit Decreasing
+        Collections.sort(items, Collections.reverseOrder());
 
-        // Create bins with random
-        Random random = new Random();
+        // Initialize bins
         List<List<Integer>> bins = new ArrayList<>();
-        List<Integer> firstBin = new ArrayList<>();
-        bins.add(firstBin);
-        int binIndex = 0;
-        for (int i=0;i<items.size();i++) {
-            while (true) {
-                int itemIndex = random.nextInt(items.size());
-                if (!visited.get(itemIndex)){
-                    visited.set(itemIndex, true);
-                    if (getBinWeight(bins.get(binIndex)) + items.get(itemIndex) <= binCapacity){
-                        bins.get(binIndex).add(items.get(itemIndex));
-                    } else {
-                        binIndex += 1;
-                        List<Integer> bin = new ArrayList<>();
-                        bin.add(items.get(itemIndex));
-                        bins.add(bin);
-                    }
+
+        // Apply the First Fit algorithm
+        for (int item : items) {
+            boolean placed = false;
+            for (List<Integer> bin : bins) {
+                if (getBinWeight(bin) + item <= binCapacity) {
+                    bin.add(item);
+                    placed = true;
                     break;
                 }
             }
+            if (!placed) {
+                List<Integer> newBin = new ArrayList<>();
+                newBin.add(item);
+                bins.add(newBin);
+            }
         }
-
         return bins;
     }
+
     private List<List<Integer>> generateNextSolution(final List<List<Integer>> currentSolution) {
         // Make a hard copy of current solution
         List<List<Integer>> nextSolution = new ArrayList<>(currentSolution);

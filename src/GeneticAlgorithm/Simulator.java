@@ -5,7 +5,6 @@ import BPP.BPPInstance;
 
 import java.util.List;
 
-
 public class Simulator {
     public static void main(String[] args) {
         BPPDatasetParser parser = new BPPDatasetParser();
@@ -18,10 +17,10 @@ public class Simulator {
                 List<Integer> itemWeights = instance.getItemWeights();
                 List<Integer> itemCounts = instance.getItemCounts();
                 int binCapacity = instance.getBinCapacity();
-                int populationSize = 10;
-                double mutationRate = 0.1;
-                double crossoverRate = 0.1;
-                int maxGeneration = 10;
+                int populationSize = 1000;
+                double mutationRate = 0.05;
+                double crossoverRate = 0.95;
+                int maxGeneration = 100;
 
                 GeneticAlgorithm geneticAlgorithm = new GeneticAlgorithm(
                         itemWeights,

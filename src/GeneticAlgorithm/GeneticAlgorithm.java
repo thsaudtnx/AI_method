@@ -36,12 +36,11 @@ public class GeneticAlgorithm {
         List<Chromosome> currentPopulation = generateInitializePopulation();
 
         // Display Initial Generation
-        // System.out.println("Initial Generation");
-        // for (int i=0;i<currentPopulation.size();i++){
+        //System.out.println("Initial Generation");
+        //for (int i=0;i<currentPopulation.size();i++){
         //    System.out.println("Chromosome " + i + " " + currentPopulation.get(i).bins.toString());
-        // }
-        // System.out.println();
-
+        //}
+        //System.out.println();
 
         // Generations iteration
         for (int generation = 0; generation < maxGeneration; generation++){
@@ -65,19 +64,19 @@ public class GeneticAlgorithm {
                 // Add the offspring into next population
                 nextPopulation.add(newChromosome);
 
-                // System.out.println("New Chromosome : " + newChromosome.bins.toString());
-                // System.out.println();
+                //System.out.println("New Chromosome : " + newChromosome.bins.toString());
+                //System.out.println();
             }
 
             // Update the population (moved it here)
             currentPopulation = nextPopulation;
 
             // Print the best solution in the current generation
-            // System.out.println("Generation " + generation);
-            // for (int i=0;i<currentPopulation.size();i++){
+            //System.out.println("Generation " + generation);
+            //for (int i=0;i<currentPopulation.size();i++){
             //    System.out.println("Chromosome " + i + " " + currentPopulation.get(i).bins.toString());
-            // }
-            // System.out.println();
+            //}
+            //System.out.println();
         }
 
         // Find the best solution
@@ -95,7 +94,42 @@ public class GeneticAlgorithm {
         // Display the result
         System.out.println("Number of bin used: " + bestChromosome.fitness);
         System.out.println("Bins: " + bestChromosome.bins.toString());
-        System.out.println();
+    }
+
+    private Chromosome selection(final List<Chromosome> population) {
+        // Calculate total fitness of the population
+        double totalFitness = 0;
+        for (Chromosome chromosome : population) {
+            totalFitness += chromosome.fitness;
+        }
+
+        // Roulette Wheel Selection
+        Chromosome parent = new Chromosome(new ArrayList<>());
+        Random random = new Random();
+        double spin = random.nextDouble();
+        double cumulativeFitness = 0;
+        //System.out.println("Roulette Wheel Selection");
+        for (int i=0;i<population.size();i++){
+            Chromosome chromosome = population.get(i);
+
+            double lowerBound = cumulativeFitness / totalFitness;
+            double upperBound = lowerBound + chromosome.fitness / totalFitness;
+
+            if (lowerBound <= spin && spin < upperBound){
+                parent = chromosome;
+            }
+
+            cumulativeFitness += chromosome.fitness;
+
+            //System.out.println("Chromosome " + i + ", Fitness " + chromosome.fitness + ", Range (" + lowerBound + ", " + upperBound +")");
+        }
+
+        //System.out.println("Spinned Value : " + spin);
+        //System.out.println("Chosen Chromosome Index : " + index);
+        //System.out.println("Bins : " + parent.bins.toString());
+        //System.out.println();
+
+        return parent;
     }
 
     private List<Chromosome> generateInitializePopulation() {
@@ -127,69 +161,29 @@ public class GeneticAlgorithm {
             visited.add(false);
         }
 
-        // Create bins with random
-        Random random = new Random();
+        // Optional: sort items by weight in descending order for First Fit Decreasing
+        Collections.sort(items, Collections.reverseOrder());
+
+        // Initialize bins
         List<List<Integer>> bins = new ArrayList<>();
-        List<Integer> firstBin = new ArrayList<>();
-        bins.add(firstBin);
-        int binIndex = 0;
-        for (int i=0;i<items.size();i++) {
-            while (true) {
-                int itemIndex = random.nextInt(items.size());
-                if (!visited.get(itemIndex)){
-                    visited.set(itemIndex, true);
-                    if (getBinWeight(bins.get(binIndex)) + items.get(itemIndex) <= binCapacity){
-                        bins.get(binIndex).add(items.get(itemIndex));
-                    } else {
-                        binIndex += 1;
-                        List<Integer> bin = new ArrayList<>();
-                        bin.add(items.get(itemIndex));
-                        bins.add(bin);
-                    }
+
+        // Apply the First Fit algorithm
+        for (int item : items) {
+            boolean placed = false;
+            for (List<Integer> bin : bins) {
+                if (getBinWeight(bin) + item <= binCapacity) {
+                    bin.add(item);
+                    placed = true;
                     break;
                 }
             }
-        }
-
-        return new Chromosome(bins);
-    }
-
-    private Chromosome selection(final List<Chromosome> population) {
-        // Calculate total fitness of the population
-        double totalFitness = 0;
-        for (Chromosome chromosome : population) {
-            totalFitness += chromosome.fitness;
-        }
-
-        // Roulette Wheel Selection
-        Chromosome parent = new Chromosome(new ArrayList<>());
-        Random random = new Random();
-        int index = 0;
-        double spin = random.nextDouble();
-        double cumulativeFitness = 0;
-        // System.out.println("Roulette Wheel Selection");
-        for (int i=0;i<population.size();i++){
-            Chromosome chromosome = population.get(i);
-
-            double lowerBound = cumulativeFitness / totalFitness;
-            double upperBound = lowerBound + chromosome.fitness / totalFitness;
-
-            if (lowerBound <= spin && spin < upperBound){
-                parent = chromosome;
-                index = i;
+            if (!placed) {
+                List<Integer> newBin = new ArrayList<>();
+                newBin.add(item);
+                bins.add(newBin);
             }
-
-            cumulativeFitness += chromosome.fitness;
-
-            // System.out.println("Chromosome " + i + ", Fitness " + chromosome.fitness + ", Range (" + lowerBound + ", " + upperBound +")");
         }
-
-        // System.out.println("Spinned Value : " + spin);
-        // System.out.println("Chosen Chromosome Index : " + index);
-        // System.out.println("Bins : " + parent.bins.toString());
-        // System.out.println();
-
-        return parent;
+        return new Chromosome(bins);
     }
 
     private Chromosome crossover(final Chromosome parent1, final Chromosome parent2, final double crossoverRate) {
@@ -224,25 +218,25 @@ public class GeneticAlgorithm {
         Chromosome child = new Chromosome(bins);
 
         // Display the crossover
-        // System.out.println("Crossover");
-        // System.out.println("Crossover point : " + crossoverPoint);
-        // System.out.println("Parent1 : " + parent1.bins.toString());
-        // System.out.println("Parent2 : " + parent2.bins.toString());
-        // System.out.println("Child : " + child.bins.toString());
-        // System.out.println();
+        //System.out.println("Crossover");
+        //System.out.println("Crossover point : " + crossoverPoint);
+        //System.out.println("Parent1 : " + parent1.bins.toString());
+        //System.out.println("Parent2 : " + parent2.bins.toString());
+        //System.out.println("Child : " + child.bins.toString());
+        //System.out.println();
 
         return child;
     }
 
     private Chromosome mutate(final Chromosome chromosome, final double mutationRate) {
         // Static mutation
-        // System.out.println("Mutation");
+        //System.out.println("Mutation");
         Random random = new Random();
         List<List<Integer>> bins = new ArrayList<>(chromosome.bins);
         for (int i = 0; i < bins.size()-1; i++) {
             // Swap the current bin with the next bin
             if (random.nextDouble() < mutationRate) {
-                // System.out.println("Mutation point : " + i);
+                //System.out.println("Mutation point : " + i);
                 List<Integer> temp = bins.get(i);
                 bins.set(i, bins.get(i+1));
                 bins.set(i+1, temp);
@@ -253,9 +247,9 @@ public class GeneticAlgorithm {
         Chromosome newChromosome = new Chromosome(bins);
 
         // Display after the mutation
-        // System.out.println("Before " + chromosome.bins.toString());
-        // System.out.println("After " + newChromosome.bins.toString());
-        // System.out.println();
+        //System.out.println("Before " + chromosome.bins.toString());
+        //System.out.println("After " + newChromosome.bins.toString());
+        //System.out.println();
 
         return newChromosome;
     }

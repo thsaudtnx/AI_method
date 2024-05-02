@@ -35,12 +35,6 @@ public class GeneticAlgorithm {
         // Initialize population
         List<Chromosome> currentPopulation = generateInitializePopulation();
 
-        // Display Initial Generation
-        //System.out.println("Initial Generation");
-        //for (int i=0;i<currentPopulation.size();i++){
-        //    System.out.println("Chromosome " + i + " " + currentPopulation.get(i).bins.toString());
-        //}
-        //System.out.println();
 
         // Generations iteration
         for (int generation = 0; generation < maxGeneration; generation++){
@@ -63,20 +57,10 @@ public class GeneticAlgorithm {
 
                 // Add the offspring into next population
                 nextPopulation.add(newChromosome);
-
-                //System.out.println("New Chromosome : " + newChromosome.bins.toString());
-                //System.out.println();
             }
 
             // Update the population (moved it here)
             currentPopulation = nextPopulation;
-
-            // Print the best solution in the current generation
-            //System.out.println("Generation " + generation);
-            //for (int i=0;i<currentPopulation.size();i++){
-            //    System.out.println("Chromosome " + i + " " + currentPopulation.get(i).bins.toString());
-            //}
-            //System.out.println();
         }
 
         // Find the best solution
@@ -94,6 +78,11 @@ public class GeneticAlgorithm {
         // Display the result
         System.out.println("Number of bin used: " + bestChromosome.fitness);
         System.out.println("Bins: " + bestChromosome.bins.toString());
+
+        // Display Wastage
+        double meanWastage = calculateMeanWastage(bestChromosome.bins);
+        System.out.println("Mean wastage per bin: " + String.format("%.2f", meanWastage) + " units");
+        System.out.println();
     }
 
     private Chromosome selection(final List<Chromosome> population) {
@@ -120,14 +109,7 @@ public class GeneticAlgorithm {
             }
 
             cumulativeFitness += chromosome.fitness;
-
-            //System.out.println("Chromosome " + i + ", Fitness " + chromosome.fitness + ", Range (" + lowerBound + ", " + upperBound +")");
         }
-
-        //System.out.println("Spinned Value : " + spin);
-        //System.out.println("Chosen Chromosome Index : " + index);
-        //System.out.println("Bins : " + parent.bins.toString());
-        //System.out.println();
 
         return parent;
     }
@@ -162,7 +144,7 @@ public class GeneticAlgorithm {
         }
 
         // Optional: sort items by weight in descending order for First Fit Decreasing
-        Collections.sort(items, Collections.reverseOrder());
+        items.sort(Collections.reverseOrder());
 
         // Initialize bins
         List<List<Integer>> bins = new ArrayList<>();
@@ -187,71 +169,42 @@ public class GeneticAlgorithm {
     }
 
     private Chromosome crossover(final Chromosome parent1, final Chromosome parent2, final double crossoverRate) {
-        // Simple Crossover
-        List<List<Integer>> bins = new ArrayList<>();
         Random random = new Random();
-
         // Check if crossover should occur based on crossover rate
         if (random.nextDouble() > crossoverRate) {
-            // If crossover rate is not met, return one of the parents
-            boolean parent = random.nextBoolean();
-            bins = new ArrayList<>(parent ? parent1.bins : parent2.bins);
-            return new Chromosome(bins);
+            // If crossover rate is not met, randomly return one of the parents
+            return random.nextBoolean() ? parent1 : parent2;
         }
 
-        int size = parent1.bins.size() > parent2.bins.size() ? parent2.bins.size() : parent1.bins.size();
+        // Calculate minimum size to ensure compatibility
+        int size = Math.min(parent1.bins.size(), parent2.bins.size());
 
         // Choose a random crossover point
         int crossoverPoint = random.nextInt(size);
 
-        // Copy genetic material from parent 1 up to the crossover point
-        for (int i = 0; i < crossoverPoint; i++) {
-            bins.add(parent1.bins.get(i));
-        }
+        // Create a new chromosome from parts of both parents
+        List<List<Integer>> bins = new ArrayList<>(size);
+        bins.addAll(parent1.bins.subList(0, crossoverPoint)); // Copy from parent1 up to the crossover point
+        bins.addAll(parent2.bins.subList(crossoverPoint, parent2.bins.size())); // Copy from parent2 from the crossover point
 
-        // Copy genetic material from parent 2 after the crossover point
-        for (int i = crossoverPoint; i < parent2.bins.size(); i++) {
-            bins.add(parent2.bins.get(i));
-        }
-
-        // Update the child
-        Chromosome child = new Chromosome(bins);
-
-        // Display the crossover
-        //System.out.println("Crossover");
-        //System.out.println("Crossover point : " + crossoverPoint);
-        //System.out.println("Parent1 : " + parent1.bins.toString());
-        //System.out.println("Parent2 : " + parent2.bins.toString());
-        //System.out.println("Child : " + child.bins.toString());
-        //System.out.println();
-
-        return child;
+        // Return new child chromosome
+        return new Chromosome(bins);
     }
 
     private Chromosome mutate(final Chromosome chromosome, final double mutationRate) {
-        // Static mutation
-        //System.out.println("Mutation");
         Random random = new Random();
         List<List<Integer>> bins = new ArrayList<>(chromosome.bins);
-        for (int i = 0; i < bins.size()-1; i++) {
-            // Swap the current bin with the next bin
-            if (random.nextDouble() < mutationRate) {
-                //System.out.println("Mutation point : " + i);
-                List<Integer> temp = bins.get(i);
-                bins.set(i, bins.get(i+1));
-                bins.set(i+1, temp);
-            }
+
+        // Determine the number of mutations based on the mutation rate
+        int numberOfMutations = (int) (mutationRate * bins.size());
+
+        for (int i = 0; i < numberOfMutations; i++) {
+            int indexToMutate = random.nextInt(bins.size());
+            int swapIndex = random.nextInt(bins.size());
+            Collections.swap(bins, indexToMutate, swapIndex);
         }
 
-        // Update the new chromosome
-        Chromosome newChromosome = new Chromosome(bins);
-
-        // Display after the mutation
-        //System.out.println("Before " + chromosome.bins.toString());
-        //System.out.println("After " + newChromosome.bins.toString());
-        //System.out.println();
-
-        return newChromosome;
+        return new Chromosome(bins);
     }
 
     private Chromosome findBestChromosome(final List<Chromosome> population){
@@ -262,6 +215,18 @@ public class GeneticAlgorithm {
             }
         }
         return bestChromosome;
+    }
+
+    private double calculateMeanWastage(final List<List<Integer>> solution) {
+        int totalWastage = 0;
+        for (List<Integer> bin : solution) {
+            int binWeight = getBinWeight(bin);
+            int binWastage = binCapacity - binWeight;
+            totalWastage += binWastage;
+        }
+        // Calculate the mean wastage by dividing by the number of bins
+        double meanWastage = (double) totalWastage / solution.size();
+        return meanWastage;
     }
 
     private int getBinWeight(final List<Integer> bin) {

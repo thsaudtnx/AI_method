@@ -59,7 +59,22 @@ public class Decreasing {
         // Display the result
         System.out.println("Bins : " + bins.toString());
         System.out.println("Number of bin used : " + bins.size());
+
+        // Display Wastage
+        double meanWastage = calculateMeanWastage(bins);
+        System.out.println("Mean wastage per bin: " + String.format("%.2f", meanWastage) + " units");
         System.out.println();
+    }
+    private double calculateMeanWastage(final List<List<Integer>> solution) {
+        int totalWastage = 0;
+        for (List<Integer> bin : solution) {
+            int binWeight = getBinWeight(bin);
+            int binWastage = binCapacity - binWeight;
+            totalWastage += binWastage;
+        }
+        // Calculate the mean wastage by dividing by the number of bins
+        double meanWastage = (double) totalWastage / solution.size();
+        return meanWastage;
     }
     private List<Integer> generateSortedItems(){
         // Set items list with itemWeights of itemCounts

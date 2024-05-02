@@ -1,0 +1,530 @@
+Index: src/SimulatedAnnealing/SimulatedAnnealing.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package SimulatedAnnealing;\r\n\r\nimport GeneticAlgorithm.GeneticAlgorithm;\r\n\r\nimport java.util.ArrayList;\r\nimport java.util.List;\r\nimport java.util.Random;\r\n\r\npublic class SimulatedAnnealing {\r\n    private final List<Integer> itemWeights;\r\n    private final List<Integer> itemCounts;\r\n    private final int binCapacity;\r\n    private final List<Double> temperatures;\r\n\r\n    public SimulatedAnnealing(List<Integer> itemWeights, List<Integer> itemCounts, int binCapacity, List<Double> temperatures){\r\n        this.itemWeights = itemWeights;\r\n        this.itemCounts = itemCounts;\r\n        this.binCapacity = binCapacity;\r\n        this.temperatures = temperatures;\r\n    }\r\n    public void simulatedAnnealing(){\r\n\r\n        // Set the start time\r\n        long startTime = System.currentTimeMillis();\r\n        Runtime runtime = Runtime.getRuntime();\r\n        // Run garbage collector to free up memory\r\n        runtime.gc();\r\n\r\n        // Initialize\r\n        List<List<Integer>> currentSolution = generateInitialSolution();\r\n        List<List<Integer>> bestSolution = currentSolution;\r\n        int currentFitness = evaluateFitness(currentSolution);\r\n        int bestFitness = currentFitness;\r\n\r\n        // Display the initial values\r\n        System.out.println(\"=== Iteration 0 ===\");\r\n        System.out.println(\"Temperature : Null\");\r\n        System.out.print(\"Current Solution : \" + currentSolution.toString());\r\n        System.out.println(\"Current fitness : \" + currentFitness);\r\n        System.out.println();\r\n\r\n        // Iterations\r\n        for (int iteration = 0; iteration < temperatures.size(); iteration++){\r\n            List<List<Integer>> nextSolution = generateNextSolution(currentSolution);\r\n            int nextFitness = evaluateFitness(currentSolution);\r\n\r\n            // Update the next fitness and solution\r\n            if (nextFitness <= currentFitness){\r\n                currentSolution = nextSolution;\r\n                currentFitness = nextFitness;\r\n            } else {\r\n                double acceptanceProbability = generateAcceptanceProbability(currentFitness, nextFitness, temperatures.get(iteration));\r\n                // Generate a random number between 0 and 1\r\n                Random random = new Random();\r\n                double randomValue = random.nextDouble();\r\n\r\n                // Check if the random value is less than or equal to the acceptance probability\r\n                if (randomValue <= acceptanceProbability) {\r\n                    // Accept the worse solution\r\n                    currentSolution = nextSolution;\r\n                    currentFitness = nextFitness;\r\n                }\r\n            }\r\n\r\n            // Update the best Fitness and solution\r\n            if (nextFitness <= bestFitness){\r\n                bestSolution = nextSolution;\r\n                bestFitness = nextFitness;\r\n            }\r\n\r\n            // Display the result of iteration\r\n            System.out.println(\"=== Iteration \" + (iteration+1) + \" ===\");\r\n            System.out.println(\"Temperature : \" + temperatures.get(iteration));\r\n            System.out.print(\"Current Solution : \" + currentSolution.toString());\r\n            System.out.println(\"Current fitness : \" + currentFitness);\r\n            System.out.println();\r\n        }\r\n\r\n        // Calculate the runtime\r\n        long endTime = System.currentTimeMillis();\r\n        long totalTime = endTime - startTime;\r\n        System.out.println(\"Total execution time: \" + totalTime + \" milliseconds\");\r\n\r\n        // Calculate the used memory\r\n        long memory = runtime.totalMemory() - runtime.freeMemory();\r\n        System.out.println(\"Used memory: \" + memory + \" bytes\");\r\n\r\n        // Display the result\r\n        System.out.println(\"Bins: \" + bestSolution.toString());\r\n        System.out.println(\"Number of bin used: \" + bestFitness);\r\n    }\r\n    private List<List<Integer>> generateInitialSolution() {\r\n        // Implement the logic to generate an initial solution\r\n        // Set items list with itemWeights of itemCounts\r\n        List<Integer> items = new ArrayList<>();\r\n        for (int i = 0; i < itemWeights.size(); i++) {\r\n            for (int j = 0; j < itemCounts.get(i); j++){\r\n                items.add(itemWeights.get(i));\r\n            }\r\n        }\r\n\r\n        // Initialize the visited array\r\n        List<Boolean> visited = new ArrayList();\r\n        for (int i=0;i<items.size();i++){\r\n            visited.add(false);\r\n        }\r\n\r\n        // Create bins with random\r\n        Random random = new Random();\r\n        List<List<Integer>> bins = new ArrayList<>();\r\n        List<Integer> firstBin = new ArrayList<>();\r\n        bins.add(firstBin);\r\n        int binIndex = 0;\r\n        for (int i=0;i<items.size();i++) {\r\n            while (true) {\r\n                int itemIndex = random.nextInt(items.size());\r\n                if (!visited.get(itemIndex)){\r\n                    visited.set(itemIndex, true);\r\n                    if (getBinWeight(bins.get(binIndex)) + items.get(itemIndex) <= binCapacity){\r\n                        bins.get(binIndex).add(items.get(itemIndex));\r\n                    } else {\r\n                        binIndex += 1;\r\n                        List<Integer> bin = new ArrayList<>();\r\n                        bin.add(items.get(itemIndex));\r\n                        bins.add(bin);\r\n                    }\r\n                    break;\r\n                }\r\n            }\r\n        }\r\n\r\n        return bins;\r\n    }\r\n    private List<List<Integer>> generateNextSolution(final List<List<Integer>> currentSolution) {\r\n        // Make a hard copy of current solution\r\n        List<List<Integer>> nextSolution = new ArrayList<>(currentSolution);\r\n\r\n        // Random function for choosing the two bins and the item\r\n        Random random = new Random();\r\n        int from = random.nextInt(nextSolution.size());\r\n        int itemIndex = random.nextInt(nextSolution.get(from).size());\r\n        int item = nextSolution.get(from).get(itemIndex);\r\n        int to;\r\n        int totalItemWeight;\r\n        do {\r\n            // from and to bin cannot be same\r\n            to = random.nextInt(nextSolution.size());\r\n            // Check the total Item weight doesn't exceed the bin capacity\r\n            totalItemWeight = getBinWeight(nextSolution.get(to)) + item;\r\n        } while (from == to || totalItemWeight > binCapacity);\r\n\r\n        // Move the item from the bin to the other bin\r\n        nextSolution.get(to).add(item); // Add the item to the new bin\r\n        nextSolution.get(from).remove(itemIndex); // Remove the item\r\n        if (nextSolution.get(from).isEmpty()){\r\n            nextSolution.remove(from); // Remove the empty bin\r\n        }\r\n\r\n        // Display the generated next solution\r\n        System.out.println(\"Move the item \" + item + \" from index \" + from + \" to index \" + to);\r\n        System.out.println(\"Next Solution : \" + nextSolution.toString());\r\n        System.out.println(\"Next Fitness : \" + evaluateFitness(nextSolution));\r\n        System.out.println();\r\n\r\n        return nextSolution;\r\n    }\r\n    private double generateAcceptanceProbability(final int currentSolution, final int nextSolution, final double temperature) {\r\n        return Math.exp((currentSolution - nextSolution) / temperature);\r\n    }\r\n    private int evaluateFitness(final List<List<Integer>> solution) {\r\n        // Implement the logic to evaluate the fitness of a solution\r\n        // For bin packing, this could be the number of bins used\r\n        return solution.size();\r\n    }\r\n    private int getBinWeight(final List<Integer> bin) {\r\n        int totalWeight = 0;\r\n        for (int item : bin) {\r\n            totalWeight += item;\r\n        }\r\n        return totalWeight;\r\n    }\r\n\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/SimulatedAnnealing/SimulatedAnnealing.java b/src/SimulatedAnnealing/SimulatedAnnealing.java
+--- a/src/SimulatedAnnealing/SimulatedAnnealing.java	(revision 5f9d24e557e731774bb8f4b92533ca10396c85ce)
++++ b/src/SimulatedAnnealing/SimulatedAnnealing.java	(date 1713972158172)
+@@ -1,7 +1,5 @@
+ package SimulatedAnnealing;
+ 
+-import GeneticAlgorithm.GeneticAlgorithm;
+-
+ import java.util.ArrayList;
+ import java.util.List;
+ import java.util.Random;
+@@ -19,7 +17,6 @@
+         this.temperatures = temperatures;
+     }
+     public void simulatedAnnealing(){
+-
+         // Set the start time
+         long startTime = System.currentTimeMillis();
+         Runtime runtime = Runtime.getRuntime();
+@@ -33,11 +30,11 @@
+         int bestFitness = currentFitness;
+ 
+         // Display the initial values
+-        System.out.println("=== Iteration 0 ===");
+-        System.out.println("Temperature : Null");
+-        System.out.print("Current Solution : " + currentSolution.toString());
+-        System.out.println("Current fitness : " + currentFitness);
+-        System.out.println();
++        // System.out.println("=== Iteration 0 ===");
++        // System.out.println("Temperature : Null");
++        // System.out.print("Current Solution : " + currentSolution.toString());
++        // System.out.println("Current fitness : " + currentFitness);
++        // System.out.println();
+ 
+         // Iterations
+         for (int iteration = 0; iteration < temperatures.size(); iteration++){
+@@ -69,11 +66,11 @@
+             }
+ 
+             // Display the result of iteration
+-            System.out.println("=== Iteration " + (iteration+1) + " ===");
+-            System.out.println("Temperature : " + temperatures.get(iteration));
+-            System.out.print("Current Solution : " + currentSolution.toString());
+-            System.out.println("Current fitness : " + currentFitness);
+-            System.out.println();
++            // System.out.println("=== Iteration " + (iteration+1) + " ===");
++            // System.out.println("Temperature : " + temperatures.get(iteration));
++            // System.out.print("Current Solution : " + currentSolution.toString());
++            // System.out.println("Current fitness : " + currentFitness);
++            // System.out.println();
+         }
+ 
+         // Calculate the runtime
+@@ -88,6 +85,7 @@
+         // Display the result
+         System.out.println("Bins: " + bestSolution.toString());
+         System.out.println("Number of bin used: " + bestFitness);
++        System.out.println();
+     }
+     private List<List<Integer>> generateInitialSolution() {
+         // Implement the logic to generate an initial solution
+@@ -137,14 +135,18 @@
+ 
+         // Random function for choosing the two bins and the item
+         Random random = new Random();
+-        int from = random.nextInt(nextSolution.size());
+-        int itemIndex = random.nextInt(nextSolution.get(from).size());
+-        int item = nextSolution.get(from).get(itemIndex);
++        int from;
+         int to;
++        int itemIndex;
++        int item;
+         int totalItemWeight;
++
+         do {
+-            // from and to bin cannot be same
++            // Random generate from, to, itemIndex
++            from = random.nextInt(nextSolution.size());
+             to = random.nextInt(nextSolution.size());
++            itemIndex = random.nextInt(nextSolution.get(from).size());
++            item = nextSolution.get(from).get(itemIndex);
+             // Check the total Item weight doesn't exceed the bin capacity
+             totalItemWeight = getBinWeight(nextSolution.get(to)) + item;
+         } while (from == to || totalItemWeight > binCapacity);
+@@ -157,10 +159,10 @@
+         }
+ 
+         // Display the generated next solution
+-        System.out.println("Move the item " + item + " from index " + from + " to index " + to);
+-        System.out.println("Next Solution : " + nextSolution.toString());
+-        System.out.println("Next Fitness : " + evaluateFitness(nextSolution));
+-        System.out.println();
++        // System.out.println("Move the item " + item + " from index " + from + " to index " + to);
++        // System.out.println("Next Solution : " + nextSolution.toString());
++        // System.out.println("Next Fitness : " + evaluateFitness(nextSolution));
++        // System.out.println();
+ 
+         return nextSolution;
+     }
+@@ -180,4 +182,4 @@
+         return totalWeight;
+     }
+ 
+-}
++}
+\ No newline at end of file
+Index: src/TabuSearch/Simulator.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package TabuSearch;\r\n\r\nimport BPP.BPPDatasetParser;\r\nimport BPP.BPPInstance;\r\n\r\nimport java.util.List;\r\n\r\npublic class Simulator {\r\n    public static void main(String[] args) {\r\n        BPPDatasetParser parser = new BPPDatasetParser();\r\n        List<BPPInstance> instances = parser.parseBPPInstances();\r\n\r\n        if (instances != null) {\r\n            for (BPPInstance instance : instances) {\r\n                System.out.println(\"Problem Name: \" + instance.getProblemName());\r\n\r\n                List<Integer> itemWeights = instance.getItemWeights();\r\n                List<Integer> itemCounts = instance.getItemCounts();\r\n                int binCapacity = instance.getBinCapacity();\r\n                int numIterations = 10;\r\n                int tabuTenure = 10;\r\n\r\n                // Tabu search\r\n                TabuSearch tabuSearch = new TabuSearch(itemWeights, itemCounts, binCapacity, numIterations, tabuTenure);\r\n                tabuSearch.tabuSearch();\r\n            }\r\n        } else {\r\n            System.out.println(\"Failed to parse the instances.\");\r\n        }\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/TabuSearch/Simulator.java b/src/TabuSearch/Simulator.java
+--- a/src/TabuSearch/Simulator.java	(revision 5f9d24e557e731774bb8f4b92533ca10396c85ce)
++++ b/src/TabuSearch/Simulator.java	(date 1713793776186)
+@@ -17,8 +17,8 @@
+                 List<Integer> itemWeights = instance.getItemWeights();
+                 List<Integer> itemCounts = instance.getItemCounts();
+                 int binCapacity = instance.getBinCapacity();
+-                int numIterations = 10;
+-                int tabuTenure = 10;
++                int numIterations = 20;
++                int tabuTenure = 1;
+ 
+                 // Tabu search
+                 TabuSearch tabuSearch = new TabuSearch(itemWeights, itemCounts, binCapacity, numIterations, tabuTenure);
+Index: .idea/workspace.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project version=\"4\">\r\n  <component name=\"AutoImportSettings\">\r\n    <option name=\"autoReloadType\" value=\"SELECTIVE\" />\r\n  </component>\r\n  <component name=\"ChangeListManager\">\r\n    <list default=\"true\" id=\"22708edf-36cc-44b2-a488-dd5e144caf4d\" name=\"Changes\" comment=\"Fixed the error\">\r\n      <change beforePath=\"$PROJECT_DIR$/.idea/workspace.xml\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/.idea/workspace.xml\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/src/BestFitDecreasing/Decreasing.java\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/src/BestFitDecreasing/Decreasing.java\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/src/BestFitDecreasing/Simulator.java\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/src/BestFitDecreasing/Simulator.java\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/src/GeneticAlgorithm/GeneticAlgorithm.java\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/src/GeneticAlgorithm/GeneticAlgorithm.java\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/src/GeneticAlgorithm/Simulator.java\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/src/GeneticAlgorithm/Simulator.java\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/src/Main.java\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/src/Main.java\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/src/SimulatedAnnealing/SimulatedAnnealing.java\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/src/SimulatedAnnealing/SimulatedAnnealing.java\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/src/SimulatedAnnealing/Simulator.java\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/src/SimulatedAnnealing/Simulator.java\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/src/TabuSearch/Simulator.java\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/src/TabuSearch/Simulator.java\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/src/TabuSearch/TabuSearch.java\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/src/TabuSearch/TabuSearch.java\" afterDir=\"false\" />\r\n    </list>\r\n    <option name=\"SHOW_DIALOG\" value=\"false\" />\r\n    <option name=\"HIGHLIGHT_CONFLICTS\" value=\"true\" />\r\n    <option name=\"HIGHLIGHT_NON_ACTIVE_CHANGELIST\" value=\"false\" />\r\n    <option name=\"LAST_RESOLUTION\" value=\"IGNORE\" />\r\n  </component>\r\n  <component name=\"FileTemplateManagerImpl\">\r\n    <option name=\"RECENT_TEMPLATES\">\r\n      <list>\r\n        <option value=\"Class\" />\r\n      </list>\r\n    </option>\r\n  </component>\r\n  <component name=\"Git.Settings\">\r\n    <option name=\"RECENT_GIT_ROOT_PATH\" value=\"$PROJECT_DIR$\" />\r\n    <option name=\"UPDATE_TYPE\" value=\"REBASE\" />\r\n  </component>\r\n  <component name=\"MarkdownSettingsMigration\">\r\n    <option name=\"stateVersion\" value=\"1\" />\r\n  </component>\r\n  <component name=\"ProjectColorInfo\">{\r\n  &quot;associatedIndex&quot;: 8\r\n}</component>\r\n  <component name=\"ProjectId\" id=\"2dOXEJwgfJGtMIJ8TtutPWTM6h5\" />\r\n  <component name=\"ProjectLevelVcsManager\" settingsEditedManually=\"true\" />\r\n  <component name=\"ProjectViewState\">\r\n    <option name=\"hideEmptyMiddlePackages\" value=\"true\" />\r\n    <option name=\"showLibraryContents\" value=\"true\" />\r\n  </component>\r\n  <component name=\"PropertiesComponent\">{\r\n  &quot;keyToString&quot;: {\r\n    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,\r\n    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,\r\n    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,\r\n    &quot;git-widget-placeholder&quot;: &quot;main&quot;,\r\n    &quot;last_opened_file_path&quot;: &quot;C:/Users/enxua/Downloads/BinPackingProblem&quot;\r\n  }\r\n}</component>\r\n  <component name=\"RecentsManager\">\r\n    <key name=\"CopyFile.RECENT_KEYS\">\r\n      <recent name=\"C:\\Users\\enxua\\Downloads\\BinPackingProblem\\src\\GeneticAlgorithm\" />\r\n    </key>\r\n    <key name=\"MoveFile.RECENT_KEYS\">\r\n      <recent name=\"C:\\Users\\enxua\\Downloads\\BinPackingProblem\\src\\GeneticAlgorithm\" />\r\n      <recent name=\"C:\\Users\\messi\\Desktop\\Nottingham University\\Year 2\\sem2\\AIM\\CW\\BinPacking\\src\\BPP\" />\r\n      <recent name=\"C:\\Users\\messi\\Desktop\\Nottingham University\\Year 2\\sem2\\AIM\\CW\\BinPacking\\src\" />\r\n    </key>\r\n  </component>\r\n  <component name=\"RunManager\" selected=\"Application.SimulatedAnnealing.Simulator\">\r\n    <configuration name=\"BestFitDecreasing\" type=\"Application\" factoryName=\"Application\" temporary=\"true\" nameIsGenerated=\"true\">\r\n      <option name=\"MAIN_CLASS_NAME\" value=\"BestFitDecreasing.BestFitDecreasing\" />\r\n      <module name=\"BinPacking\" />\r\n      <method v=\"2\">\r\n        <option name=\"Make\" enabled=\"true\" />\r\n      </method>\r\n    </configuration>\r\n    <configuration name=\"BestFitDecreasing.Simulator\" type=\"Application\" factoryName=\"Application\" temporary=\"true\" nameIsGenerated=\"true\">\r\n      <option name=\"MAIN_CLASS_NAME\" value=\"BestFitDecreasing.Simulator\" />\r\n      <module name=\"BinPacking\" />\r\n      <extension name=\"coverage\">\r\n        <pattern>\r\n          <option name=\"PATTERN\" value=\"BestFitDecreasing.*\" />\r\n          <option name=\"ENABLED\" value=\"true\" />\r\n        </pattern>\r\n      </extension>\r\n      <method v=\"2\">\r\n        <option name=\"Make\" enabled=\"true\" />\r\n      </method>\r\n    </configuration>\r\n    <configuration name=\"SimulatedAnnealing.Simulator\" type=\"Application\" factoryName=\"Application\" temporary=\"true\" nameIsGenerated=\"true\">\r\n      <option name=\"MAIN_CLASS_NAME\" value=\"SimulatedAnnealing.Simulator\" />\r\n      <module name=\"BinPacking\" />\r\n      <extension name=\"coverage\">\r\n        <pattern>\r\n          <option name=\"PATTERN\" value=\"SimulatedAnnealing.*\" />\r\n          <option name=\"ENABLED\" value=\"true\" />\r\n        </pattern>\r\n      </extension>\r\n      <method v=\"2\">\r\n        <option name=\"Make\" enabled=\"true\" />\r\n      </method>\r\n    </configuration>\r\n    <configuration name=\"Simulator\" type=\"Application\" factoryName=\"Application\" temporary=\"true\" nameIsGenerated=\"true\">\r\n      <option name=\"MAIN_CLASS_NAME\" value=\"GeneticAlgorithm.Simulator\" />\r\n      <module name=\"BinPacking\" />\r\n      <extension name=\"coverage\">\r\n        <pattern>\r\n          <option name=\"PATTERN\" value=\"GeneticAlgorithm.*\" />\r\n          <option name=\"ENABLED\" value=\"true\" />\r\n        </pattern>\r\n      </extension>\r\n      <method v=\"2\">\r\n        <option name=\"Make\" enabled=\"true\" />\r\n      </method>\r\n    </configuration>\r\n    <configuration name=\"TabuSearch.Simulator\" type=\"Application\" factoryName=\"Application\" temporary=\"true\" nameIsGenerated=\"true\">\r\n      <option name=\"MAIN_CLASS_NAME\" value=\"TabuSearch.Simulator\" />\r\n      <module name=\"BinPacking\" />\r\n      <extension name=\"coverage\">\r\n        <pattern>\r\n          <option name=\"PATTERN\" value=\"TabuSearch.*\" />\r\n          <option name=\"ENABLED\" value=\"true\" />\r\n        </pattern>\r\n      </extension>\r\n      <method v=\"2\">\r\n        <option name=\"Make\" enabled=\"true\" />\r\n      </method>\r\n    </configuration>\r\n    <recent_temporary>\r\n      <list>\r\n        <item itemvalue=\"Application.SimulatedAnnealing.Simulator\" />\r\n        <item itemvalue=\"Application.Simulator\" />\r\n        <item itemvalue=\"Application.BestFitDecreasing.Simulator\" />\r\n        <item itemvalue=\"Application.TabuSearch.Simulator\" />\r\n        <item itemvalue=\"Application.BestFitDecreasing\" />\r\n      </list>\r\n    </recent_temporary>\r\n  </component>\r\n  <component name=\"SpellCheckerSettings\" RuntimeDictionaries=\"0\" Folders=\"0\" CustomDictionaries=\"0\" DefaultDictionary=\"application-level\" UseSingleDictionary=\"true\" transferred=\"true\" />\r\n  <component name=\"TaskManager\">\r\n    <task active=\"true\" id=\"Default\" summary=\"Default task\">\r\n      <changelist id=\"22708edf-36cc-44b2-a488-dd5e144caf4d\" name=\"Changes\" comment=\"Finished GeneticAlgorithm\" />\r\n      <created>1709879988864</created>\r\n      <option name=\"number\" value=\"Default\" />\r\n      <option name=\"presentableId\" value=\"Default\" />\r\n      <updated>1709879988864</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00001\" summary=\"Genetic Algorithm 1 (not fully functional)\">\r\n      <option name=\"closed\" value=\"true\" />\r\n      <created>1710993763119</created>\r\n      <option name=\"number\" value=\"00001\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00001\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1710993763119</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00002\" summary=\"Genetic Algorithm (not fully funcitonal)\">\r\n      <option name=\"closed\" value=\"true\" />\r\n      <created>1710996571831</created>\r\n      <option name=\"number\" value=\"00002\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00002\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1710996571831</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00003\" summary=\"Genetic Algorithm (not fully funcitonal)\">\r\n      <option name=\"closed\" value=\"true\" />\r\n      <created>1711003360145</created>\r\n      <option name=\"number\" value=\"00003\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00003\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1711003360145</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00004\" summary=\"Finished GeneticAlgorithm\">\r\n      <created>1713083055988</created>\r\n      <option name=\"number\" value=\"00004\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00004\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1713083055988</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00005\" summary=\"Fixed the error\">\r\n      <created>1713164127069</created>\r\n      <option name=\"number\" value=\"00005\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00005\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1713164127069</updated>\r\n    </task>\r\n    <option name=\"localTasksCounter\" value=\"6\" />\r\n    <servers />\r\n  </component>\r\n  <component name=\"VcsManagerConfiguration\">\r\n    <MESSAGE value=\"Genetic Algorithm 1 (not fully functional)\" />\r\n    <MESSAGE value=\"Genetic Algorithm (not fully funcitonal)\" />\r\n    <MESSAGE value=\"Finished GeneticAlgorithm\" />\r\n    <MESSAGE value=\"Fixed the error\" />\r\n    <option name=\"LAST_COMMIT_MESSAGE\" value=\"Fixed the error\" />\r\n  </component>\r\n  <component name=\"com.intellij.coverage.CoverageDataManagerImpl\">\r\n    <SUITE FILE_PATH=\"coverage/BinPackingProblem$GeneticAlgoSimulator.ic\" NAME=\"GeneticAlgoSimulator Coverage Results\" MODIFIED=\"1710952484698\" SOURCE_PROVIDER=\"com.intellij.coverage.DefaultCoverageFileProvider\" RUNNER=\"idea\" COVERAGE_BY_TEST_ENABLED=\"false\" COVERAGE_TRACING_ENABLED=\"false\">\r\n      <FILTER>GeneticAlgorithm.*</FILTER>\r\n    </SUITE>\r\n  </component>\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/workspace.xml b/.idea/workspace.xml
+--- a/.idea/workspace.xml	(revision 5f9d24e557e731774bb8f4b92533ca10396c85ce)
++++ b/.idea/workspace.xml	(date 1713795951493)
+@@ -4,13 +4,10 @@
+     <option name="autoReloadType" value="SELECTIVE" />
+   </component>
+   <component name="ChangeListManager">
+-    <list default="true" id="22708edf-36cc-44b2-a488-dd5e144caf4d" name="Changes" comment="Fixed the error">
++    <list default="true" id="22708edf-36cc-44b2-a488-dd5e144caf4d" name="Changes" comment="Finished GeneticAlgorithm">
+       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/src/BestFitDecreasing/Decreasing.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/BestFitDecreasing/Decreasing.java" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/src/BestFitDecreasing/Simulator.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/BestFitDecreasing/Simulator.java" afterDir="false" />
+       <change beforePath="$PROJECT_DIR$/src/GeneticAlgorithm/GeneticAlgorithm.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/GeneticAlgorithm/GeneticAlgorithm.java" afterDir="false" />
+       <change beforePath="$PROJECT_DIR$/src/GeneticAlgorithm/Simulator.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/GeneticAlgorithm/Simulator.java" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Main.java" afterDir="false" />
+       <change beforePath="$PROJECT_DIR$/src/SimulatedAnnealing/SimulatedAnnealing.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/SimulatedAnnealing/SimulatedAnnealing.java" afterDir="false" />
+       <change beforePath="$PROJECT_DIR$/src/SimulatedAnnealing/Simulator.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/SimulatedAnnealing/Simulator.java" afterDir="false" />
+       <change beforePath="$PROJECT_DIR$/src/TabuSearch/Simulator.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/TabuSearch/Simulator.java" afterDir="false" />
+@@ -44,15 +41,16 @@
+     <option name="hideEmptyMiddlePackages" value="true" />
+     <option name="showLibraryContents" value="true" />
+   </component>
+-  <component name="PropertiesComponent">{
+-  &quot;keyToString&quot;: {
+-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+-    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+-    &quot;last_opened_file_path&quot;: &quot;C:/Users/enxua/Downloads/BinPackingProblem&quot;
++  <component name="PropertiesComponent"><![CDATA[{
++  "keyToString": {
++    "RunOnceActivity.OpenProjectViewOnStart": "true",
++    "RunOnceActivity.ShowReadmeOnStart": "true",
++    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
++    "deletionFromPopupRequiresConfirmation": "false",
++    "git-widget-placeholder": "main",
++    "last_opened_file_path": "C:/Users/enxua/Downloads/BinPackingProblem"
+   }
+-}</component>
++}]]></component>
+   <component name="RecentsManager">
+     <key name="CopyFile.RECENT_KEYS">
+       <recent name="C:\Users\enxua\Downloads\BinPackingProblem\src\GeneticAlgorithm" />
+@@ -62,76 +60,6 @@
+       <recent name="C:\Users\messi\Desktop\Nottingham University\Year 2\sem2\AIM\CW\BinPacking\src\BPP" />
+       <recent name="C:\Users\messi\Desktop\Nottingham University\Year 2\sem2\AIM\CW\BinPacking\src" />
+     </key>
+-  </component>
+-  <component name="RunManager" selected="Application.SimulatedAnnealing.Simulator">
+-    <configuration name="BestFitDecreasing" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+-      <option name="MAIN_CLASS_NAME" value="BestFitDecreasing.BestFitDecreasing" />
+-      <module name="BinPacking" />
+-      <method v="2">
+-        <option name="Make" enabled="true" />
+-      </method>
+-    </configuration>
+-    <configuration name="BestFitDecreasing.Simulator" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+-      <option name="MAIN_CLASS_NAME" value="BestFitDecreasing.Simulator" />
+-      <module name="BinPacking" />
+-      <extension name="coverage">
+-        <pattern>
+-          <option name="PATTERN" value="BestFitDecreasing.*" />
+-          <option name="ENABLED" value="true" />
+-        </pattern>
+-      </extension>
+-      <method v="2">
+-        <option name="Make" enabled="true" />
+-      </method>
+-    </configuration>
+-    <configuration name="SimulatedAnnealing.Simulator" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+-      <option name="MAIN_CLASS_NAME" value="SimulatedAnnealing.Simulator" />
+-      <module name="BinPacking" />
+-      <extension name="coverage">
+-        <pattern>
+-          <option name="PATTERN" value="SimulatedAnnealing.*" />
+-          <option name="ENABLED" value="true" />
+-        </pattern>
+-      </extension>
+-      <method v="2">
+-        <option name="Make" enabled="true" />
+-      </method>
+-    </configuration>
+-    <configuration name="Simulator" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+-      <option name="MAIN_CLASS_NAME" value="GeneticAlgorithm.Simulator" />
+-      <module name="BinPacking" />
+-      <extension name="coverage">
+-        <pattern>
+-          <option name="PATTERN" value="GeneticAlgorithm.*" />
+-          <option name="ENABLED" value="true" />
+-        </pattern>
+-      </extension>
+-      <method v="2">
+-        <option name="Make" enabled="true" />
+-      </method>
+-    </configuration>
+-    <configuration name="TabuSearch.Simulator" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+-      <option name="MAIN_CLASS_NAME" value="TabuSearch.Simulator" />
+-      <module name="BinPacking" />
+-      <extension name="coverage">
+-        <pattern>
+-          <option name="PATTERN" value="TabuSearch.*" />
+-          <option name="ENABLED" value="true" />
+-        </pattern>
+-      </extension>
+-      <method v="2">
+-        <option name="Make" enabled="true" />
+-      </method>
+-    </configuration>
+-    <recent_temporary>
+-      <list>
+-        <item itemvalue="Application.SimulatedAnnealing.Simulator" />
+-        <item itemvalue="Application.Simulator" />
+-        <item itemvalue="Application.BestFitDecreasing.Simulator" />
+-        <item itemvalue="Application.TabuSearch.Simulator" />
+-        <item itemvalue="Application.BestFitDecreasing" />
+-      </list>
+-    </recent_temporary>
+   </component>
+   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+   <component name="TaskManager">
+@@ -173,22 +101,14 @@
+       <option name="project" value="LOCAL" />
+       <updated>1713083055988</updated>
+     </task>
+-    <task id="LOCAL-00005" summary="Fixed the error">
+-      <created>1713164127069</created>
+-      <option name="number" value="00005" />
+-      <option name="presentableId" value="LOCAL-00005" />
+-      <option name="project" value="LOCAL" />
+-      <updated>1713164127069</updated>
+-    </task>
+-    <option name="localTasksCounter" value="6" />
++    <option name="localTasksCounter" value="5" />
+     <servers />
+   </component>
+   <component name="VcsManagerConfiguration">
+     <MESSAGE value="Genetic Algorithm 1 (not fully functional)" />
+     <MESSAGE value="Genetic Algorithm (not fully funcitonal)" />
+     <MESSAGE value="Finished GeneticAlgorithm" />
+-    <MESSAGE value="Fixed the error" />
+-    <option name="LAST_COMMIT_MESSAGE" value="Fixed the error" />
++    <option name="LAST_COMMIT_MESSAGE" value="Finished GeneticAlgorithm" />
+   </component>
+   <component name="com.intellij.coverage.CoverageDataManagerImpl">
+     <SUITE FILE_PATH="coverage/BinPackingProblem$GeneticAlgoSimulator.ic" NAME="GeneticAlgoSimulator Coverage Results" MODIFIED="1710952484698" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false">
+Index: src/TabuSearch/TabuSearch.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package TabuSearch;\r\n\r\nimport java.util.ArrayList;\r\nimport java.util.List;\r\nimport java.util.Random;\r\n\r\npublic class TabuSearch {\r\n    private final List<Integer> itemWeights;\r\n    private final List<Integer> itemCounts;\r\n    private final int binCapacity;\r\n    private final int numIterations;\r\n    private final int tabuTenure;\r\n    public TabuSearch(List<Integer> itemWeights, List<Integer> itemCounts, int binCapacity, int numIterations, int tabuTenure){\r\n        this.itemWeights = itemWeights;\r\n        this.itemCounts = itemCounts;\r\n        this.binCapacity = binCapacity;\r\n        this.numIterations = numIterations;\r\n        this.tabuTenure = tabuTenure;\r\n    }\r\n    public void tabuSearch() {\r\n\r\n        // Set the start time\r\n        long startTime = System.currentTimeMillis();\r\n        Runtime runtime = Runtime.getRuntime();\r\n        // Run garbage collector to free up memory\r\n        runtime.gc();\r\n\r\n        // Initialize the bestSolution and tabuList\r\n        Solution initialSolution = generateInitialSolution();\r\n        Solution bestSolution = initialSolution;\r\n        List<Solution> tabuList = new ArrayList<>();\r\n        tabuList.add(initialSolution);\r\n\r\n        // Display the initial solution\r\n        System.out.println(\"Initial Solution\");\r\n        System.out.println(\"Bins : \" + initialSolution.bins.toString());\r\n        System.out.println(\"Fitness : \" + initialSolution.fitness);\r\n        System.out.println();\r\n\r\n        // Tabu Search\r\n        for (int iteration = 0; iteration < numIterations; iteration++) {\r\n            // Generate neighboring solutions\r\n            List<Solution> neighbors = generateNeighbors(bestSolution);\r\n\r\n            // Display the neighbors\r\n            System.out.println(\"Iteration \" + iteration);\r\n            for (int i=0;i<neighbors.size();i++){\r\n                System.out.println(\"Neighbor \" + i + \" \" + neighbors.get(i).bins.toString());\r\n            }\r\n            System.out.println();\r\n\r\n            // Find the best neighbor that is not in the tabu list\r\n            Solution bestNeighbor = null;\r\n            int bestNeighborFitness = Integer.MAX_VALUE;\r\n            for (Solution neighbor : neighbors) {\r\n                if (!tabuList.contains(neighbor) && neighbor.fitness < bestNeighborFitness) {\r\n                    bestNeighbor = neighbor;\r\n                    bestNeighborFitness = neighbor.fitness;\r\n                }\r\n            }\r\n\r\n            // Update the best solution\r\n            if (bestNeighborFitness < bestSolution.fitness) {\r\n                bestSolution = bestNeighbor;\r\n            }\r\n\r\n            // Update the tabu list\r\n            tabuList.add(bestNeighbor);\r\n            if (tabuList.size() > tabuTenure) {\r\n                tabuList.remove(0);\r\n            }\r\n\r\n            // Display the best neighbor and tabu list\r\n            System.out.println(\"Tabu list : \");\r\n            for (int i=0;i<tabuList.size();i++){\r\n                System.out.print(tabuList.get(i).bins.toString());\r\n            }\r\n            System.out.println();\r\n            System.out.println(\"Best Neighbor\");\r\n            System.out.println(\"Bins : \" + bestNeighbor.bins.toString());\r\n            System.out.println(\"Fitness : \" + bestNeighbor.fitness);\r\n            System.out.println();\r\n        }\r\n\r\n        // Calculate the runtime\r\n        long endTime = System.currentTimeMillis();\r\n        long totalTime = endTime - startTime;\r\n        System.out.println(\"Total execution time: \" + totalTime + \" milliseconds\");\r\n\r\n        // Calculate the used memory\r\n        long memory = runtime.totalMemory() - runtime.freeMemory();\r\n        System.out.println(\"Used memory: \" + memory + \" bytes\");\r\n\r\n        // Display the result\r\n        System.out.println(\"Bin : \" + bestSolution.bins.toString());\r\n        System.out.println(\"Number of bins used : \" + bestSolution.fitness);\r\n        System.out.println();\r\n    }\r\n    private List<Solution> generateNeighbors(Solution solution) {\r\n        List<Solution> neighbors = new ArrayList<>();\r\n\r\n        // Iterate over each bin in the solution\r\n        for (int i = 0; i < solution.bins.size(); i++) {\r\n            List<Integer> bin = solution.bins.get(i);\r\n\r\n            // Iterate over each item in the current bin\r\n            for (int j = 0; j < bin.size(); j++) {\r\n                int currentItem = bin.get(j);\r\n\r\n                // Try moving the current item to other bins\r\n                for (int k = 0; k < solution.bins.size(); k++) {\r\n                    if (i == k) continue; // Skip the same bin\r\n\r\n                    // Create a deep copy of the current solution\r\n                    List<List<Integer>> bins = new ArrayList<>();\r\n                    for (List<Integer> innerList : solution.bins) {\r\n                        List<Integer> binCopy = new ArrayList<>(innerList);\r\n                        bins.add(binCopy);\r\n                    }\r\n\r\n                    // Add the current item to the target bin if its weight doesn't exceed the bin capacity\r\n                    if (getBinWeight(bins.get(k)) + currentItem <= binCapacity) {\r\n                        bins.get(k).add(currentItem); // Add the item to the target bin\r\n                        bins.get(i).remove(j); // Remove the item\r\n\r\n                        // Remove the empty bin\r\n                        if (bins.get(i).isEmpty()){\r\n                            bins.remove(i);\r\n                        }\r\n\r\n                        // Add the neighbor into the neighbors\r\n                        Solution neighbor = new Solution(bins);\r\n                        neighbors.add(neighbor);\r\n                    }\r\n                }\r\n            }\r\n        }\r\n\r\n        return neighbors;\r\n    }\r\n    private Solution generateInitialSolution() {\r\n        // Implement the logic to generate an initial solution\r\n        // Set items list with itemWeights of itemCounts\r\n        List<Integer> items = new ArrayList<>();\r\n        for (int i = 0; i < itemWeights.size(); i++) {\r\n            for (int j = 0; j < itemCounts.get(i); j++){\r\n                items.add(itemWeights.get(i));\r\n            }\r\n        }\r\n\r\n        // Initialize the visited array\r\n        List<Boolean> visited = new ArrayList();\r\n        for (int i=0;i<items.size();i++){\r\n            visited.add(false);\r\n        }\r\n\r\n        // Create bins with random\r\n        Random random = new Random();\r\n        List<List<Integer>> bins = new ArrayList<>();\r\n        List<Integer> firstBin = new ArrayList<>();\r\n        bins.add(firstBin);\r\n        int binIndex = 0;\r\n        for (int i=0;i<items.size();i++) {\r\n            while (true) {\r\n                int itemIndex = random.nextInt(items.size());\r\n                if (!visited.get(itemIndex)){\r\n                    visited.set(itemIndex, true);\r\n                    if (getBinWeight(bins.get(binIndex)) + items.get(itemIndex) <= binCapacity){\r\n                        bins.get(binIndex).add(items.get(itemIndex));\r\n                    } else {\r\n                        binIndex += 1;\r\n                        List<Integer> bin = new ArrayList<>();\r\n                        bin.add(items.get(itemIndex));\r\n                        bins.add(bin);\r\n                    }\r\n                    break;\r\n                }\r\n            }\r\n        }\r\n\r\n        Solution solution = new Solution(bins);\r\n\r\n        return solution;\r\n    }\r\n    private int getBinWeight(List<Integer> bin) {\r\n        int totalWeight = 0;\r\n        for (int item : bin) {\r\n            totalWeight += item;\r\n        }\r\n        return totalWeight;\r\n    }\r\n    private class Solution {\r\n        private List<List<Integer>> bins;\r\n        private int fitness;\r\n        public Solution(List<List<Integer>> bins){\r\n            this.bins = bins;\r\n            this.fitness = bins.size();\r\n        }\r\n    }\r\n}\r\n\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/TabuSearch/TabuSearch.java b/src/TabuSearch/TabuSearch.java
+--- a/src/TabuSearch/TabuSearch.java	(revision 5f9d24e557e731774bb8f4b92533ca10396c85ce)
++++ b/src/TabuSearch/TabuSearch.java	(date 1713777121364)
+@@ -32,10 +32,10 @@
+         tabuList.add(initialSolution);
+ 
+         // Display the initial solution
+-        System.out.println("Initial Solution");
+-        System.out.println("Bins : " + initialSolution.bins.toString());
+-        System.out.println("Fitness : " + initialSolution.fitness);
+-        System.out.println();
++        //System.out.println("Initial Solution");
++        //System.out.println("Bins : " + initialSolution.bins.toString());
++        //System.out.println("Fitness : " + initialSolution.fitness);
++        //System.out.println();
+ 
+         // Tabu Search
+         for (int iteration = 0; iteration < numIterations; iteration++) {
+@@ -43,11 +43,11 @@
+             List<Solution> neighbors = generateNeighbors(bestSolution);
+ 
+             // Display the neighbors
+-            System.out.println("Iteration " + iteration);
++            //System.out.println("Iteration " + iteration);
+             for (int i=0;i<neighbors.size();i++){
+-                System.out.println("Neighbor " + i + " " + neighbors.get(i).bins.toString());
++                //System.out.println("Neighbor " + i + " " + neighbors.get(i).bins.toString());
+             }
+-            System.out.println();
++            //System.out.println();
+ 
+             // Find the best neighbor that is not in the tabu list
+             Solution bestNeighbor = null;
+@@ -71,15 +71,15 @@
+             }
+ 
+             // Display the best neighbor and tabu list
+-            System.out.println("Tabu list : ");
++            //System.out.println("Tabu list : ");
+             for (int i=0;i<tabuList.size();i++){
+-                System.out.print(tabuList.get(i).bins.toString());
++                //System.out.print(tabuList.get(i).bins.toString());
+             }
+-            System.out.println();
+-            System.out.println("Best Neighbor");
+-            System.out.println("Bins : " + bestNeighbor.bins.toString());
+-            System.out.println("Fitness : " + bestNeighbor.fitness);
+-            System.out.println();
++            //System.out.println();
++            //System.out.println("Best Neighbor");
++            //System.out.println("Bins : " + bestNeighbor.bins.toString());
++            //System.out.println("Fitness : " + bestNeighbor.fitness);
++            //System.out.println();
+         }
+ 
+         // Calculate the runtime
+Index: src/GeneticAlgorithm/GeneticAlgorithm.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package GeneticAlgorithm;\r\n\r\nimport java.util.ArrayList;\r\nimport java.util.List;\r\nimport java.util.Random;\r\nimport java.util.Collections;\r\n\r\npublic class GeneticAlgorithm {\r\n    private final List<Integer> itemWeights;\r\n    private final List<Integer> itemCounts;\r\n    private final int binCapacity;\r\n    private final int populationSize;\r\n    private final double mutationRate;\r\n    private final double crossoverRate;\r\n    private final int maxGeneration;\r\n\r\n    public GeneticAlgorithm(List<Integer> itemWeights, List<Integer> itemCounts, int binCapacity, int populationSize, double mutationRate, double crossoverRate, int maxGeneration){\r\n        this.itemWeights = itemWeights;\r\n        this.itemCounts = itemCounts;\r\n        this.binCapacity = binCapacity;\r\n        this.populationSize = populationSize;\r\n        this.mutationRate = mutationRate;\r\n        this.crossoverRate = crossoverRate;\r\n        this.maxGeneration = maxGeneration;\r\n    }\r\n\r\n    public void geneticAlgorithm() {\r\n\r\n        // Set the start time\r\n        long startTime = System.currentTimeMillis();\r\n        Runtime runtime = Runtime.getRuntime();\r\n        // Run garbage collector to free up memory\r\n        runtime.gc();\r\n\r\n        // Initialize population\r\n        List<Chromosome> currentPopulation = generateInitializePopulation();\r\n\r\n        // Display Initial Generation\r\n        System.out.println(\"Initial Generation\");\r\n        for (int i=0;i<currentPopulation.size();i++){\r\n            System.out.println(\"Chromosome \" + i + \" \" + currentPopulation.get(i).bins.toString());\r\n        }\r\n        System.out.println();\r\n\r\n\r\n        // Generations iteration\r\n        for (int generation = 0; generation < maxGeneration; generation++){\r\n\r\n            // Evaluate fitness\r\n            evaluateFitness(currentPopulation);\r\n\r\n            // Create new generation\r\n            List<Chromosome> nextPopulation = new ArrayList<>();\r\n            for (int i = 0; i < populationSize; i++) {\r\n                // Selection\r\n                Chromosome parent1 = selection(currentPopulation);\r\n                Chromosome parent2 = selection(currentPopulation);\r\n\r\n                // Crossover\r\n                Chromosome offspring = crossover(parent1, parent2, crossoverRate);\r\n\r\n                // Mutation\r\n                Chromosome newChromosome = mutate(offspring, mutationRate);\r\n\r\n                // Add the offspring into next population\r\n                nextPopulation.add(newChromosome);\r\n\r\n                System.out.println(\"New Chromosome : \" + newChromosome.bins.toString());\r\n                System.out.println();\r\n            }\r\n\r\n            // Update the population (moved it here)\r\n            currentPopulation = nextPopulation;\r\n\r\n            // Print the best solution in the current generation\r\n            System.out.println(\"Generation \" + generation);\r\n            for (int i=0;i<currentPopulation.size();i++){\r\n                System.out.println(\"Chromosome \" + i + \" \" + currentPopulation.get(i).bins.toString());\r\n            }\r\n            System.out.println();\r\n        }\r\n\r\n        // Find the best solution\r\n        Chromosome bestChromosome = findBestChromosome(currentPopulation);\r\n\r\n        // Calculate the runtime\r\n        long endTime = System.currentTimeMillis();\r\n        long totalTime = endTime - startTime;\r\n        System.out.println(\"Total execution time: \" + totalTime + \" milliseconds\");\r\n\r\n        // Calculate the used memory\r\n        long memory = runtime.totalMemory() - runtime.freeMemory();\r\n        System.out.println(\"Used memory: \" + memory + \" bytes\");\r\n\r\n        // Display the result\r\n        System.out.println(\"Number of bin used: \" + bestChromosome.fitness);\r\n        System.out.println(\"Bins: \" + bestChromosome.bins.toString());\r\n    }\r\n\r\n    private Chromosome selection(final List<Chromosome> population) {\r\n        // Calculate total fitness of the population\r\n        double totalFitness = 0;\r\n        for (Chromosome chromosome : population) {\r\n            totalFitness += chromosome.fitness;\r\n        }\r\n\r\n        // Roulette Wheel Selection\r\n        Chromosome parent = new Chromosome(new ArrayList<>());\r\n        Random random = new Random();\r\n        int index = 0;\r\n        double spin = random.nextDouble();\r\n        double cumulativeFitness = 0;\r\n        System.out.println(\"Roulette Wheel Selection\");\r\n        for (int i=0;i<population.size();i++){\r\n            Chromosome chromosome = population.get(i);\r\n\r\n            double lowerBound = cumulativeFitness / totalFitness;\r\n            double upperBound = lowerBound + chromosome.fitness / totalFitness;\r\n\r\n            if (lowerBound <= spin && spin < upperBound){\r\n                parent = chromosome;\r\n                index = i;\r\n            }\r\n\r\n            cumulativeFitness += chromosome.fitness;\r\n\r\n            System.out.println(\"Chromosome \" + i + \", Fitness \" + chromosome.fitness + \", Range (\" + lowerBound + \", \" + upperBound +\")\");\r\n        }\r\n\r\n        System.out.println(\"Spinned Value : \" + spin);\r\n        System.out.println(\"Chosen Chromosome Index : \" + index);\r\n        System.out.println(\"Bins : \" + parent.bins.toString());\r\n        System.out.println();\r\n\r\n        return parent;\r\n    }\r\n\r\n    private List<Chromosome> generateInitializePopulation() {\r\n        List<Chromosome> population = new ArrayList<>();\r\n        for (int i = 0; i < populationSize; i++) {\r\n            population.add(generateInitialChromosome());\r\n        }\r\n        return population;\r\n    }\r\n\r\n    private void evaluateFitness(final List<Chromosome> population) {\r\n        for (Chromosome chromosome : population) {\r\n            chromosome.fitness = chromosome.bins.size();\r\n        }\r\n    }\r\n\r\n    private Chromosome generateInitialChromosome() {\r\n        // Set items list with itemWeights of itemCounts\r\n        List<Integer> items = new ArrayList<>();\r\n        for (int i = 0; i < itemWeights.size(); i++) {\r\n            for (int j = 0; j < itemCounts.get(i); j++){\r\n                items.add(itemWeights.get(i));\r\n            }\r\n        }\r\n\r\n        // Initialize the visited array\r\n        List<Boolean> visited = new ArrayList();\r\n        for (int i=0;i<items.size();i++){\r\n            visited.add(false);\r\n        }\r\n\r\n        // Create bins with random\r\n        Random random = new Random();\r\n        List<List<Integer>> bins = new ArrayList<>();\r\n        List<Integer> firstBin = new ArrayList<>();\r\n        bins.add(firstBin);\r\n        int binIndex = 0;\r\n        for (int i=0;i<items.size();i++) {\r\n            while (true) {\r\n                int itemIndex = random.nextInt(items.size());\r\n                if (!visited.get(itemIndex)){\r\n                    visited.set(itemIndex, true);\r\n                    if (getBinWeight(bins.get(binIndex)) + items.get(itemIndex) <= binCapacity){\r\n                        bins.get(binIndex).add(items.get(itemIndex));\r\n                    } else {\r\n                        binIndex += 1;\r\n                        List<Integer> bin = new ArrayList<>();\r\n                        bin.add(items.get(itemIndex));\r\n                        bins.add(bin);\r\n                    }\r\n                    break;\r\n                }\r\n            }\r\n        }\r\n\r\n        return new Chromosome(bins);\r\n    }\r\n\r\n    private Chromosome crossover(final Chromosome parent1, final Chromosome parent2, final double crossoverRate) {\r\n        // Simple Crossover\r\n        List<List<Integer>> bins = new ArrayList<>();\r\n        Random random = new Random();\r\n\r\n        // Check if crossover should occur based on crossover rate\r\n        if (random.nextDouble() > crossoverRate) {\r\n            // If crossover rate is not met, return one of the parents\r\n            boolean parent = random.nextBoolean();\r\n            bins = new ArrayList<>(parent ? parent1.bins : parent2.bins);\r\n            return new Chromosome(bins);\r\n        }\r\n\r\n        int size = parent1.bins.size() > parent2.bins.size() ? parent2.bins.size() : parent1.bins.size();\r\n\r\n        // Choose a random crossover point\r\n        int crossoverPoint = random.nextInt(size);\r\n\r\n        // Copy genetic material from parent 1 up to the crossover point\r\n        for (int i = 0; i < crossoverPoint; i++) {\r\n            bins.add(parent1.bins.get(i));\r\n        }\r\n\r\n        // Copy genetic material from parent 2 after the crossover point\r\n        for (int i = crossoverPoint; i < parent2.bins.size(); i++) {\r\n            bins.add(parent2.bins.get(i));\r\n        }\r\n\r\n        // Update the child\r\n        Chromosome child = new Chromosome(bins);\r\n\r\n        // Display the crossover\r\n        System.out.println(\"Crossover\");\r\n        System.out.println(\"Crossover point : \" + crossoverPoint);\r\n        System.out.println(\"Parent1 : \" + parent1.bins.toString());\r\n        System.out.println(\"Parent2 : \" + parent2.bins.toString());\r\n        System.out.println(\"Child : \" + child.bins.toString());\r\n        System.out.println();\r\n\r\n        return child;\r\n    }\r\n\r\n    private Chromosome mutate(final Chromosome chromosome, final double mutationRate) {\r\n        // Static mutation\r\n        System.out.println(\"Mutation\");\r\n        Random random = new Random();\r\n        List<List<Integer>> bins = new ArrayList<>(chromosome.bins);\r\n        for (int i = 0; i < bins.size()-1; i++) {\r\n            // Swap the current bin with the next bin\r\n            if (random.nextDouble() < mutationRate) {\r\n                System.out.println(\"Mutation point : \" + i);\r\n                List<Integer> temp = bins.get(i);\r\n                bins.set(i, bins.get(i+1));\r\n                bins.set(i+1, temp);\r\n            }\r\n        }\r\n\r\n        // Update the new chromosome\r\n        Chromosome newChromosome = new Chromosome(bins);\r\n\r\n        // Display after the mutation\r\n        System.out.println(\"Before \" + chromosome.bins.toString());\r\n        System.out.println(\"After \" + newChromosome.bins.toString());\r\n        System.out.println();\r\n\r\n        return newChromosome;\r\n    }\r\n\r\n    private Chromosome findBestChromosome(final List<Chromosome> population){\r\n        Chromosome bestChromosome = population.get(0);\r\n        for (Chromosome chromosome : population){\r\n            if (chromosome.fitness < bestChromosome.fitness){\r\n                bestChromosome = chromosome;\r\n            }\r\n        }\r\n        return bestChromosome;\r\n    }\r\n\r\n    private int getBinWeight(final List<Integer> bin) {\r\n        int totalWeight = 0;\r\n        for (int item : bin) {\r\n            totalWeight += item;\r\n        }\r\n        return totalWeight;\r\n    }\r\n\r\n    private class Chromosome {\r\n        List<List<Integer>> bins;\r\n        int fitness;\r\n\r\n        Chromosome(List<List<Integer>> bins) {\r\n            this.bins = bins;\r\n            this.fitness = bins.size();\r\n        }\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/GeneticAlgorithm/GeneticAlgorithm.java b/src/GeneticAlgorithm/GeneticAlgorithm.java
+--- a/src/GeneticAlgorithm/GeneticAlgorithm.java	(revision 5f9d24e557e731774bb8f4b92533ca10396c85ce)
++++ b/src/GeneticAlgorithm/GeneticAlgorithm.java	(date 1713542786249)
+@@ -36,11 +36,11 @@
+         List<Chromosome> currentPopulation = generateInitializePopulation();
+ 
+         // Display Initial Generation
+-        System.out.println("Initial Generation");
++        //System.out.println("Initial Generation");
+         for (int i=0;i<currentPopulation.size();i++){
+-            System.out.println("Chromosome " + i + " " + currentPopulation.get(i).bins.toString());
++            //System.out.println("Chromosome " + i + " " + currentPopulation.get(i).bins.toString());
+         }
+-        System.out.println();
++        //System.out.println();
+ 
+ 
+         // Generations iteration
+@@ -65,19 +65,19 @@
+                 // Add the offspring into next population
+                 nextPopulation.add(newChromosome);
+ 
+-                System.out.println("New Chromosome : " + newChromosome.bins.toString());
+-                System.out.println();
++                //System.out.println("New Chromosome : " + newChromosome.bins.toString());
++                //System.out.println();
+             }
+ 
+             // Update the population (moved it here)
+             currentPopulation = nextPopulation;
+ 
+             // Print the best solution in the current generation
+-            System.out.println("Generation " + generation);
++            //System.out.println("Generation " + generation);
+             for (int i=0;i<currentPopulation.size();i++){
+-                System.out.println("Chromosome " + i + " " + currentPopulation.get(i).bins.toString());
++                //System.out.println("Chromosome " + i + " " + currentPopulation.get(i).bins.toString());
+             }
+-            System.out.println();
++            //System.out.println();
+         }
+ 
+         // Find the best solution
+@@ -110,7 +110,7 @@
+         int index = 0;
+         double spin = random.nextDouble();
+         double cumulativeFitness = 0;
+-        System.out.println("Roulette Wheel Selection");
++        //System.out.println("Roulette Wheel Selection");
+         for (int i=0;i<population.size();i++){
+             Chromosome chromosome = population.get(i);
+ 
+@@ -124,13 +124,13 @@
+ 
+             cumulativeFitness += chromosome.fitness;
+ 
+-            System.out.println("Chromosome " + i + ", Fitness " + chromosome.fitness + ", Range (" + lowerBound + ", " + upperBound +")");
++            //System.out.println("Chromosome " + i + ", Fitness " + chromosome.fitness + ", Range (" + lowerBound + ", " + upperBound +")");
+         }
+ 
+-        System.out.println("Spinned Value : " + spin);
+-        System.out.println("Chosen Chromosome Index : " + index);
+-        System.out.println("Bins : " + parent.bins.toString());
+-        System.out.println();
++        //System.out.println("Spinned Value : " + spin);
++        //System.out.println("Chosen Chromosome Index : " + index);
++        //System.out.println("Bins : " + parent.bins.toString());
++        //System.out.println();
+ 
+         return parent;
+     }
+@@ -223,25 +223,25 @@
+         Chromosome child = new Chromosome(bins);
+ 
+         // Display the crossover
+-        System.out.println("Crossover");
+-        System.out.println("Crossover point : " + crossoverPoint);
+-        System.out.println("Parent1 : " + parent1.bins.toString());
+-        System.out.println("Parent2 : " + parent2.bins.toString());
+-        System.out.println("Child : " + child.bins.toString());
+-        System.out.println();
++        //System.out.println("Crossover");
++        //System.out.println("Crossover point : " + crossoverPoint);
++        //System.out.println("Parent1 : " + parent1.bins.toString());
++        //System.out.println("Parent2 : " + parent2.bins.toString());
++        //System.out.println("Child : " + child.bins.toString());
++        //System.out.println();
+ 
+         return child;
+     }
+ 
+     private Chromosome mutate(final Chromosome chromosome, final double mutationRate) {
+         // Static mutation
+-        System.out.println("Mutation");
++        //System.out.println("Mutation");
+         Random random = new Random();
+         List<List<Integer>> bins = new ArrayList<>(chromosome.bins);
+         for (int i = 0; i < bins.size()-1; i++) {
+             // Swap the current bin with the next bin
+             if (random.nextDouble() < mutationRate) {
+-                System.out.println("Mutation point : " + i);
++                //System.out.println("Mutation point : " + i);
+                 List<Integer> temp = bins.get(i);
+                 bins.set(i, bins.get(i+1));
+                 bins.set(i+1, temp);
+@@ -252,9 +252,9 @@
+         Chromosome newChromosome = new Chromosome(bins);
+ 
+         // Display after the mutation
+-        System.out.println("Before " + chromosome.bins.toString());
+-        System.out.println("After " + newChromosome.bins.toString());
+-        System.out.println();
++        //System.out.println("Before " + chromosome.bins.toString());
++        //System.out.println("After " + newChromosome.bins.toString());
++        //System.out.println();
+ 
+         return newChromosome;
+     }
+Index: src/SimulatedAnnealing/Simulator.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package SimulatedAnnealing;\r\n\r\nimport BPP.BPPDatasetParser;\r\nimport BPP.BPPInstance;\r\n\r\nimport java.util.ArrayList;\r\nimport java.util.List;\r\n\r\n\r\npublic class Simulator {\r\n    public static void main(String[] args) {\r\n        BPPDatasetParser parser = new BPPDatasetParser();\r\n        List<BPPInstance> instances = parser.parseBPPInstances();\r\n\r\n        if (instances != null) {\r\n            for (BPPInstance instance : instances) {\r\n                System.out.println(\"Problem Name: \" + instance.getProblemName());\r\n\r\n                List<Integer> itemWeights = instance.getItemWeights();\r\n                List<Integer> itemCounts = instance.getItemCounts();\r\n                int binCapacity = instance.getBinCapacity();\r\n\r\n                // T1 = 0.2Zc,\r\n                // T2 = 0.5T1,\r\n                // T3 = 0.5T2,\r\n                // T4 = 0.5T3,\r\n                // T5 = 0.5T4\r\n                List<Double> temperatures = new ArrayList<>();\r\n                int zc = 0;\r\n                for (int i=0;i<itemCounts.size();i++){\r\n                    zc += itemCounts.get(i);\r\n                }\r\n                double t1 = 0.2 * zc;\r\n                double t2 = 0.5 * t1;\r\n                double t3 = 0.5 * t2;\r\n                double t4 = 0.5 * t3;\r\n                double t5 = 0.5 * t4;\r\n                temperatures.add(t1);\r\n                temperatures.add(t1);\r\n                temperatures.add(t1);\r\n                temperatures.add(t1);\r\n                temperatures.add(t1);\r\n                temperatures.add(t2);\r\n                temperatures.add(t2);\r\n                temperatures.add(t2);\r\n                temperatures.add(t2);\r\n                temperatures.add(t2);\r\n                temperatures.add(t3);\r\n                temperatures.add(t3);\r\n                temperatures.add(t3);\r\n                temperatures.add(t3);\r\n                temperatures.add(t3);\r\n                temperatures.add(t4);\r\n                temperatures.add(t4);\r\n                temperatures.add(t4);\r\n                temperatures.add(t4);\r\n                temperatures.add(t4);\r\n                temperatures.add(t5);\r\n                temperatures.add(t5);\r\n                temperatures.add(t5);\r\n                temperatures.add(t5);\r\n                temperatures.add(t5);\r\n\r\n                SimulatedAnnealing simulatedAnnealing = new SimulatedAnnealing(itemWeights, itemCounts, binCapacity, temperatures);\r\n                simulatedAnnealing.simulatedAnnealing();\r\n            }\r\n        } else {\r\n            System.out.println(\"Failed to parse the instances.\");\r\n        }\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/SimulatedAnnealing/Simulator.java b/src/SimulatedAnnealing/Simulator.java
+--- a/src/SimulatedAnnealing/Simulator.java	(revision 5f9d24e557e731774bb8f4b92533ca10396c85ce)
++++ b/src/SimulatedAnnealing/Simulator.java	(date 1714036885655)
+@@ -30,11 +30,11 @@
+                 for (int i=0;i<itemCounts.size();i++){
+                     zc += itemCounts.get(i);
+                 }
+-                double t1 = 0.2 * zc;
+-                double t2 = 0.5 * t1;
+-                double t3 = 0.5 * t2;
+-                double t4 = 0.5 * t3;
+-                double t5 = 0.5 * t4;
++                double t1 = 1.2 * zc;
++                double t2 = 0.6 * t1;
++                double t3 = 0.6 * t2;
++                double t4 = 0.6 * t3;
++                double t5 = 0.6 * t4;
+                 temperatures.add(t1);
+                 temperatures.add(t1);
+                 temperatures.add(t1);
+@@ -68,4 +68,4 @@
+             System.out.println("Failed to parse the instances.");
+         }
+     }
+-}
++}
+\ No newline at end of file
+Index: src/GeneticAlgorithm/Simulator.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package GeneticAlgorithm;\r\n\r\nimport BPP.BPPDatasetParser;\r\nimport BPP.BPPInstance;\r\n\r\nimport java.util.List;\r\n\r\n\r\npublic class Simulator {\r\n    public static void main(String[] args) {\r\n        BPPDatasetParser parser = new BPPDatasetParser();\r\n        List<BPPInstance> instances = parser.parseBPPInstances();\r\n\r\n        if (instances != null) {\r\n            for (BPPInstance instance : instances) {\r\n                System.out.println(\"Problem Name: \" + instance.getProblemName());\r\n\r\n                List<Integer> itemWeights = instance.getItemWeights();\r\n                List<Integer> itemCounts = instance.getItemCounts();\r\n                int binCapacity = instance.getBinCapacity();\r\n                int populationSize = 10;\r\n                double mutationRate = 0.1;\r\n                double crossoverRate = 0.1;\r\n                int maxGeneration = 10;\r\n\r\n                GeneticAlgorithm geneticAlgorithm = new GeneticAlgorithm(\r\n                        itemWeights,\r\n                        itemCounts,\r\n                        binCapacity,\r\n                        populationSize,\r\n                        mutationRate,\r\n                        crossoverRate,\r\n                        maxGeneration\r\n                );\r\n\r\n                geneticAlgorithm.geneticAlgorithm();\r\n\r\n            }\r\n        } else {\r\n            System.out.println(\"Failed to parse the instances.\");\r\n        }\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/GeneticAlgorithm/Simulator.java b/src/GeneticAlgorithm/Simulator.java
+--- a/src/GeneticAlgorithm/Simulator.java	(revision 5f9d24e557e731774bb8f4b92533ca10396c85ce)
++++ b/src/GeneticAlgorithm/Simulator.java	(date 1713798186071)
+@@ -18,9 +18,9 @@
+                 List<Integer> itemWeights = instance.getItemWeights();
+                 List<Integer> itemCounts = instance.getItemCounts();
+                 int binCapacity = instance.getBinCapacity();
+-                int populationSize = 10;
++                int populationSize = 100;
+                 double mutationRate = 0.1;
+-                double crossoverRate = 0.1;
++                double crossoverRate = 0.5;
+                 int maxGeneration = 10;
+ 
+                 GeneticAlgorithm geneticAlgorithm = new GeneticAlgorithm(

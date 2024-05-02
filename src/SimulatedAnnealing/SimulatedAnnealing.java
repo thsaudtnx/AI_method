@@ -36,8 +36,8 @@ public class SimulatedAnnealing {
         // System.out.print("Current Solution : " + currentSolution.toString());
         // System.out.println("Current fitness : " + currentFitness);
         // System.out.println();
-
         // Iterations
+
         for (int iteration = 0; iteration < temperatures.size(); iteration++){
             List<List<Integer>> nextSolution = generateNextSolution(currentSolution);
             int nextFitness = evaluateFitness(currentSolution);
@@ -86,7 +86,12 @@ public class SimulatedAnnealing {
         // Display the result
         System.out.println("Bins: " + bestSolution.toString());
         System.out.println("Number of bin used: " + bestFitness);
+
+        // Display Wastage
+        double meanWastage = calculateMeanWastage(bestSolution);
+        System.out.println("Mean wastage per bin: " + String.format("%.2f", meanWastage) + " units");
         System.out.println();
+
     }
     private List<List<Integer>> generateInitialSolution() {
         // Generate list of items based on their weights and counts
@@ -123,45 +128,78 @@ public class SimulatedAnnealing {
     }
 
     private List<List<Integer>> generateNextSolution(final List<List<Integer>> currentSolution) {
-        // Make a hard copy of current solution
-        List<List<Integer>> nextSolution = new ArrayList<>(currentSolution);
-
-        // Random function for choosing the two bins and the item
-        Random random = new Random();
-        int from;
-        int to;
-        int itemIndex;
-        int item;
-        int totalItemWeight;
-
-        do {
-            // Random generate from, to, itemIndex
-            from = random.nextInt(nextSolution.size());
-            to = random.nextInt(nextSolution.size());
-            itemIndex = random.nextInt(nextSolution.get(from).size());
-            item = nextSolution.get(from).get(itemIndex);
-            // Check the total Item weight doesn't exceed the bin capacity
-            totalItemWeight = getBinWeight(nextSolution.get(to)) + item;
-        } while (from == to || totalItemWeight > binCapacity);
-
-        // Move the item from the bin to the other bin
-        nextSolution.get(to).add(item); // Add the item to the new bin
-        nextSolution.get(from).remove(itemIndex); // Remove the item
-        if (nextSolution.get(from).isEmpty()){
-            nextSolution.remove(from); // Remove the empty bin
+        // Deep copy of the current solution
+        List<List<Integer>> nextSolution = new ArrayList<>(currentSolution.size());
+        for (List<Integer> bin : currentSolution) {
+            nextSolution.add(new ArrayList<>(bin));
         }
 
-        // Display the generated next solution
-        // System.out.println("Move the item " + item + " from index " + from + " to index " + to);
-        // System.out.println("Next Solution : " + nextSolution.toString());
-        // System.out.println("Next Fitness : " + evaluateFitness(nextSolution));
-        // System.out.println();
+        // Shared random instance
+        Random random = new Random();
+
+        // Select a random bin and item
+        int fromBinIndex = random.nextInt(nextSolution.size());
+        List<Integer> fromBin = nextSolution.get(fromBinIndex);
+        int itemIndex = random.nextInt(fromBin.size());
+        int item = fromBin.get(itemIndex);
+
+        // List of potential bins that can accommodate the item
+        List<Integer> possibleBins = new ArrayList<>();
+        for (int i = 0; i < nextSolution.size(); i++) {
+            if (i != fromBinIndex && nextSolution.get(i).isEmpty()) continue;
+            int spaceLeft = binCapacity - getBinWeight(nextSolution.get(i));
+            if (spaceLeft >= item) {
+                possibleBins.add(i);
+            }
+        }
+
+        // Randomly select a bin to place the item if possible
+        if (!possibleBins.isEmpty()) {
+            int targetBinIndex = possibleBins.get(random.nextInt(possibleBins.size()));
+            nextSolution.get(targetBinIndex).add(item);
+            fromBin.remove(itemIndex);
+        } else {
+            // If no suitable bin found, create a new bin
+            nextSolution.add(new ArrayList<>(List.of(item)));
+        }
+
+        // Remove the original bin if it's now empty
+        if (fromBin.isEmpty()) {
+            nextSolution.remove(fromBinIndex);
+        }
 
         return nextSolution;
     }
-    private double generateAcceptanceProbability(final int currentSolution, final int nextSolution, final double temperature) {
-        return Math.exp((currentSolution - nextSolution) / temperature);
+
+    private double calculateMeanWastage(final List<List<Integer>> solution) {
+        int totalWastage = 0;
+        for (List<Integer> bin : solution) {
+            int binWeight = getBinWeight(bin);
+            int binWastage = binCapacity - binWeight;
+            totalWastage += binWastage;
+        }
+        // Calculate the mean wastage by dividing by the number of bins
+        double meanWastage = (double) totalWastage / solution.size();
+        return meanWastage;
     }
+
+
+    private double generateAcceptanceProbability(final int currentFitness, final int nextFitness, final double temperature) {
+        if (nextFitness < currentFitness) {
+            // Automatically accept if the new solution is better
+            return 1.0;
+        } else {
+            // Calculate acceptance probability for a worse solution
+            double exponent = -(nextFitness - currentFitness) / temperature;
+            // Check for extremely negative exponent to avoid underflow
+            if (exponent < -50) {
+                return 0.0;
+            } else {
+                return Math.exp(exponent);
+            }
+        }
+    }
+
     private int evaluateFitness(final List<List<Integer>> solution) {
         // Implement the logic to evaluate the fitness of a solution
         // For bin packing, this could be the number of bins used

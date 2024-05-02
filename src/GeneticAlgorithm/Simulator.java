@@ -17,10 +17,10 @@ public class Simulator {
                 List<Integer> itemWeights = instance.getItemWeights();
                 List<Integer> itemCounts = instance.getItemCounts();
                 int binCapacity = instance.getBinCapacity();
-                int populationSize = 1000;
-                double mutationRate = 0.05;
-                double crossoverRate = 0.95;
-                int maxGeneration = 100;
+                int populationSize = 600;
+                double mutationRate = 0.1;
+                double crossoverRate = 0.5;
+                int maxGeneration = 1000;
 
                 GeneticAlgorithm geneticAlgorithm = new GeneticAlgorithm(
                         itemWeights,

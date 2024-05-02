@@ -32,10 +32,10 @@ public class TabuSearch {
         tabuList.add(initialSolution);
 
         // Display the initial solution
-        // System.out.println("Initial Solution");
-        // System.out.println("Bins : " + initialSolution.bins.toString());
-        // System.out.println("Fitness : " + initialSolution.fitness);
-        // System.out.println();
+        //System.out.println("Initial Solution");
+        //System.out.println("Bins : " + initialSolution.bins.toString());
+        //System.out.println("Fitness : " + initialSolution.fitness);
+        //System.out.println();
 
         // Tabu Search
         for (int iteration = 0; iteration < numIterations; iteration++) {
@@ -43,11 +43,11 @@ public class TabuSearch {
             List<Solution> neighbors = generateNeighbors(bestSolution);
 
             // Display the neighbors
-            // System.out.println("Iteration " + iteration);
-            // for (int i=0;i<neighbors.size();i++){
-            //     System.out.println("Neighbor " + i + " " + neighbors.get(i).bins.toString());
-            // }
-            // System.out.println();
+            //System.out.println("Iteration " + iteration);
+            //for (int i=0;i<neighbors.size();i++){
+            //    System.out.println("Neighbor " + i + " " + neighbors.get(i).bins.toString());
+            //}
+            //System.out.println();
 
             // Find the best neighbor that is not in the tabu list
             Solution bestNeighbor = null;
@@ -71,15 +71,15 @@ public class TabuSearch {
             }
 
             // Display the best neighbor and tabu list
-            // System.out.println("Tabu list : ");
-            // for (int i=0;i<tabuList.size();i++){
-            //     System.out.print(tabuList.get(i).bins.toString());
-            // }
-            // System.out.println();
-            // System.out.println("Best Neighbor");
-            // System.out.println("Bins : " + bestNeighbor.bins.toString());
-            // System.out.println("Fitness : " + bestNeighbor.fitness);
-            // System.out.println();
+            //System.out.println("Tabu list : ");
+            //for (int i=0;i<tabuList.size();i++){
+            //    System.out.print(tabuList.get(i).bins.toString());
+            //}
+            //System.out.println();
+            //System.out.println("Best Neighbor");
+            //System.out.println("Bins : " + bestNeighbor.bins.toString());
+            //System.out.println("Fitness : " + bestNeighbor.fitness);
+            //System.out.println();
         }
 
         // Calculate the runtime
@@ -94,6 +94,10 @@ public class TabuSearch {
         // Display the result
         System.out.println("Bin : " + bestSolution.bins.toString());
         System.out.println("Number of bins used : " + bestSolution.fitness);
+
+        // Display Wastage
+        double meanWastage = calculateMeanWastage(bestSolution.bins);
+        System.out.println("Mean wastage per bin: " + String.format("%.2f", meanWastage) + " units");
         System.out.println();
     }
     private List<Solution> generateNeighbors(Solution solution) {
@@ -181,6 +185,17 @@ public class TabuSearch {
         Solution solution = new Solution(bins);
 
         return solution;
+    }
+    private double calculateMeanWastage(final List<List<Integer>> solution) {
+        int totalWastage = 0;
+        for (List<Integer> bin : solution) {
+            int binWeight = getBinWeight(bin);
+            int binWastage = binCapacity - binWeight;
+            totalWastage += binWastage;
+        }
+        // Calculate the mean wastage by dividing by the number of bins
+        double meanWastage = (double) totalWastage / solution.size();
+        return meanWastage;
     }
     private int getBinWeight(List<Integer> bin) {
         int totalWeight = 0;

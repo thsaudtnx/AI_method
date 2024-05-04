@@ -23,7 +23,7 @@ public class Simulator {
                 List<Double> temperatures = new ArrayList<>();
                 int n = 10;
                 double initialTemp = 10000;
-                double coolingRate = 0.8;
+                double coolingRate = 0.1;
                 for (int i = 0; i < n; i++) {
                     temperatures.add(initialTemp * Math.pow(coolingRate, i));
                 }
